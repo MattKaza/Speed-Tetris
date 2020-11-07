@@ -7,6 +7,7 @@ import numpy as np
 class GameOverException(Exception):
     pass
 
+
 class Player:
     def __init__(self):
         self.score = 0
@@ -196,7 +197,7 @@ class Game:
 
                 if time.time() - last_cycle >= self.fall_speed:
                     last_cycle = time.time()
-                    ret = player.cycle()
+                    player.cycle()
                     self.print_screen(player)
                     self.level_up_check(player)
 
@@ -212,9 +213,10 @@ class Game:
             self.known_level = game_level
             # This is the tetris-approved formula
             # It's a really bad idea to use eval and shit here, but it's better than using magics in code
-            self.fall_speed = eval(FALL_SPEED_FORMULA.format(level = str(self.known_level)))
+            self.fall_speed = eval(FALL_SPEED_FORMULA.format(level=str(self.known_level)))
 
-    def border_row(self, top=False, text='', width=0):
+    @staticmethod
+    def border_row(top=False, text='', width=0):
         row = '┏' if top else '┗'
         if text:
             text = ' ' + text + ' '
@@ -258,15 +260,15 @@ class Game:
         return stats
 
     def draw_help(self):
-        help = [self.border_row(top=True, text='Help', width=RIGHT_SIDE_GRAPHICS_WIDTH)]
+        keys = [self.border_row(top=True, text='Help', width=RIGHT_SIDE_GRAPHICS_WIDTH)]
 
         for key in self.keymap:
             row = key.capitalize() + ':'
             row += self.keymap[key].rjust(RIGHT_SIDE_GRAPHICS_WIDTH - len(row))
-            help.append(BORDER + row + BORDER)
+            keys.append(BORDER + row + BORDER)
 
-        help.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
-        return help
+        keys.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
+        return keys
 
     def draw_board(self, player):
         board = [self.border_row(top=True, text='Tetris', width=WIDTH * CHAR_PRINT_WIDTH)]
@@ -303,7 +305,8 @@ class Game:
                               self.draw_help()
         board = self.draw_board(player)
         game_over_row = int(len(board) / 2)
-        board[game_over_row + 1] = BORDER + 'Press {0} to quit'.format(self.keymap['quit']).center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
+        board[game_over_row + 1] = BORDER + 'Press {0} to quit'.format(self.keymap['quit']).center(
+            WIDTH * CHAR_PRINT_WIDTH) + BORDER
         board[game_over_row] = BORDER + 'Restarting...'.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
         board[game_over_row - 1] = BORDER + 'G A M E   O V E R'.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
         for i in range(len(board)):
