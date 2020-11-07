@@ -1,9 +1,9 @@
 from consts import *
 from time import sleep
 import numpy as np
-import random
 
-class Player():
+
+class Player:
     def __init__(self):
         self.score = 0
         self.centerpoint = []
@@ -44,8 +44,8 @@ class Player():
                     if self.board[x][y] == LIVE:
                         self.board[x][y] = DEAD
                         
-        spawn_area = self.board[SPAWN[0][0]:SPAWN[0][1], 
-            SPAWN[1][0]:SPAWN[1][1]]
+        spawn_area = self.board[SPAWN[0][0]:SPAWN[0][1],
+                     SPAWN[1][0]:SPAWN[1][1]]
         
         if DEAD in spawn_area:
             self.game_over()
@@ -57,8 +57,8 @@ class Player():
         spawn_area = piece_coords
         self.centerpoint = DEFAULT_CENTERPOINT
         
-        self.board[SPAWN[0][0]:SPAWN[0][1], 
-            SPAWN[1][0]:SPAWN[1][1]] = spawn_area
+        self.board[SPAWN[0][0]:SPAWN[0][1],
+        SPAWN[1][0]:SPAWN[1][1]] = spawn_area
 
     def game_over(self):        
         print(GAME_OVER_TEXT)
