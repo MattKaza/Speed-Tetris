@@ -15,6 +15,7 @@ SCORE = {
     3: 300,
     4: 1200
 }
+GAME_OVER_TIMEOUT = 0.8
 # Pixel indices
 EMPTY = 0
 LIVE = 1
@@ -24,14 +25,23 @@ HEIGHT = 22
 DISPLAYED_HEIGHT = 20
 WIDTH = 10
 SPAWN_EDGE = [20, 3]
-SPAWN = [[SPAWN_EDGE[0], SPAWN_EDGE[0]+2],
-         [SPAWN_EDGE[1], SPAWN_EDGE[1]+4]]
+SPAWN_SIZE = [2, 4]
+SPAWN = [[SPAWN_EDGE[0], SPAWN_EDGE[0]+SPAWN_SIZE[0]],
+         [SPAWN_EDGE[1], SPAWN_EDGE[1]+SPAWN_SIZE[1]]]
 DEFAULT_CENTERPOINT = [SPAWN_EDGE[0]+0,
                        SPAWN_EDGE[1]+1]
 
-# Aestetic things
+# Aesthetic things
 SEPARATOR = "-" * 30
-GAME_OVER_TEXT = [['-', '-', '-', '-'], 
-             ['G', 'A', 'M', 'E'],
-             ['O', 'V', 'E', 'R'], 
-             ['-', '-', '-', '-']]
+CHAR_PRINT_WIDTH = 2
+RIGHT_SIDE_GRAPHICS_WIDTH = CHAR_PRINT_WIDTH * 8  # Multiplier needs to be even for best results
+BORDER = '┃'
+FULL_PIXEL = '█' * CHAR_PRINT_WIDTH
+# Reversed because I like the right-tending alignment better
+EMPTY_PIXEL = ''.join(reversed('·'.center(CHAR_PRINT_WIDTH)))
+GAME_OVER_TEXT = [
+    ['-', '-', '-', '-'],
+    ['G', 'A', 'M', 'E'],
+    ['O', 'V', 'E', 'R'],
+    ['-', '-', '-', '-']
+]
