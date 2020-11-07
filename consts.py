@@ -15,6 +15,9 @@ SCORE = {
     3: 300,
     4: 1200
 }
+# This is the tetris approved formula.
+# Am I using eval? Hell yes
+FALL_SPEED_FORMULA = '(0.8 - (({level} - 1) * 0.007)) ** ({level} - 1)'
 GAME_OVER_TIMEOUT = 0.8
 # Pixel indices
 EMPTY = 0

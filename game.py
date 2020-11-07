@@ -206,13 +206,13 @@ class Game:
 
     def level_up_check(self, player):
         # You might say this entire func is based on an eval finding the variable name it expected
-        # And you'd be right.
+        # And you'd be wrong. It's based on two evals!
         game_level = eval(self.stats['level'])
         if self.known_level != game_level:
             self.known_level = game_level
             # This is the tetris-approved formula
-            # One day the magics here will be consts TODO
-            self.fall_speed = (0.8 - ((self.known_level - 1) * 0.007)) ** (self.known_level - 1)
+            # It's a really bad idea to use eval and shit here, but it's better than using magics in code
+            self.fall_speed = eval(FALL_SPEED_FORMULA.format(level = str(self.known_level)))
 
     def border_row(self, top=False, text='', width=0):
         row = '┏' if top else '┗'
