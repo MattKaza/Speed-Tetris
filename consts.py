@@ -18,7 +18,7 @@ SCORE = {
 # This is the tetris approved formula.
 # Am I using eval? Hell yes
 FALL_SPEED_FORMULA = '(0.8 - (({level} - 1) * 0.007)) ** ({level} - 1)'
-GAME_OVER_TIMEOUT = 0.8
+GAME_OVER_TIMEOUT = 1.5
 # Pixel indices
 EMPTY = 0
 LIVE = 1
@@ -42,9 +42,4 @@ BORDER = '┃'
 FULL_PIXEL = '█' * CHAR_PRINT_WIDTH
 # Reversed because I like the right-tending alignment better
 EMPTY_PIXEL = ''.join(reversed('·'.center(CHAR_PRINT_WIDTH)))
-GAME_OVER_TEXT = [
-    ['-', '-', '-', '-'],
-    ['G', 'A', 'M', 'E'],
-    ['O', 'V', 'E', 'R'],
-    ['-', '-', '-', '-']
-]
+EMPTY_SHAPE = [[0, 0, 0, 0], [0, 0, 0, 0]]

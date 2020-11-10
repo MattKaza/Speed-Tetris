@@ -12,9 +12,11 @@ TODO:
 * Make keys mappable
 * Don't print arrow input
 * Fix movement jankyness
-* Try to rotate again when next to wall
+* ~~Try to rotate again when next to wall~~
 * Rethink centerpoint placement for blocks
 * ~~Implement hard drop~~
 * Line clearing animation
-* Implement hold
+* ~~Implement hold~~
 * ~~Implement levels~~
+* Create multiplayer class
+* Local or Remote multiplayer

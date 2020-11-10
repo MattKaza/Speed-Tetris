@@ -8,13 +8,25 @@ class GameOverException(Exception):
     pass
 
 
+class OutOfBoundsException(Exception):
+    def __init__(self, shift):
+        super()
+        self.shift = shift
+
+
+class BlockOverlapException(Exception):
+    pass
+
+
 class Player:
     def __init__(self):
         self.score = 0
         self.level = 1.0
         self.centerpoint = []
         self.next_pieces = []
-        self.held_piece = []  # TODO implement
+        self.held_piece = EMPTY_SHAPE
+        self.held_piece_key = None
+        self.active_piece_key = None
         self.board = np.array([[0] * WIDTH for _ in range(HEIGHT)])
         self.random_generator()
         self.end_round()  # Called to spawn first piece
@@ -60,7 +72,7 @@ class Player:
         piece, self.next_pieces = self.next_pieces[-1], self.next_pieces[:-1]
         if len(self.next_pieces) == 0:
             self.random_generator()
-        _, piece_coord = piece
+        self.active_piece_key, piece_coord = piece
         spawn_area = piece_coord
         self.centerpoint = DEFAULT_CENTERPOINT
 
@@ -84,22 +96,29 @@ class Player:
         except (IndexError, AssertionError):
             pass
 
-    def rotate(self):
+    def rotate(self, centerpoint=None, shift=0):
+        if centerpoint is None:
+            centerpoint = self.centerpoint
         try:
             new_pos = []
             old_pos = []
             for x in range(HEIGHT):
                 for y in range(WIDTH):
                     if self.board[x][y] == LIVE:
-                        x_distance = x - self.centerpoint[0]
-                        y_distance = y - self.centerpoint[1]
+                        x_distance = x - centerpoint[0]
+                        y_distance = (y + shift) - centerpoint[1]
                         new_relative_x = (-1) * y_distance
                         new_relative_y = x_distance
-                        new_x = new_relative_x + self.centerpoint[0]
-                        new_y = new_relative_y + self.centerpoint[1]
-                        assert new_x >= 0
-                        assert new_y >= 0
-                        assert self.board[new_x][new_y] != DEAD
+                        new_x = new_relative_x + centerpoint[0]
+                        new_y = new_relative_y + centerpoint[1]
+                        if new_x < 0:
+                            raise BlockOverlapException
+                        if new_y < 0:
+                            raise OutOfBoundsException(shift=1)
+                        if new_y >= len(self.board[new_x]):
+                            raise OutOfBoundsException(shift=-1)
+                        if self.board[new_x][new_y] == DEAD:
+                            raise BlockOverlapException
 
                         old_pos.append([x, y])
                         new_pos.append([new_x, new_y])
@@ -111,11 +130,26 @@ class Player:
                 for x, y in new_pos:
                     self.board[x][y] = LIVE
 
-        except (AssertionError, IndexError):
+        except OutOfBoundsException as e:
+            self.centerpoint[1] += e.shift
+            return self.rotate(shift=e.shift)
+
+        except BlockOverlapException:
             return
 
+    def _clear_active_piece(self):
+        for i in range(len(self.board)):
+            for j in range(len(self.board[i])):
+                self.board[i][j] = EMPTY if self.board[i][j] == LIVE else self.board[i][j]
+
     def hold(self):
-        raise NotImplementedError  # TODO
+        if self.held_piece_key is not None:
+            piece_to_append = [self.held_piece_key, SHAPES_DICT[self.held_piece_key]]
+            self.next_pieces = np.append(self.next_pieces, [piece_to_append], axis=0)
+        self.held_piece_key = self.active_piece_key
+        self.held_piece = SHAPES_DICT[self.held_piece_key]
+        self._clear_active_piece()
+        self.end_round()
 
     def is_row_clearable(self, i):
         for j in range(WIDTH):
@@ -142,14 +176,16 @@ class Player:
 
 
 class Game:
-    def __init__(self, fps=10, speed=0.8):
+    def __init__(self, fps=10):
         """
         Initialises and starts a game of one player, and prints everything
         :param fps: Frames per second - How many times to sample for keystrokes per second
         :param speed: Time per drop - How long will it take for the tetromino to fall a row
         """
+        self.known_level = 1
         self.sample_speed = 1 / fps
-        self.fall_speed = speed
+        self.fall_speed = eval(FALL_SPEED_FORMULA.format(level=str(self.known_level)))
+        self.player = None
         self.keymap = {
             'left': 'left',
             'right': 'right',
@@ -158,17 +194,18 @@ class Game:
             'drop': 'space',
             'restart': 'r',
             'quit': 'q',
+            'hold': 'l',
         }
         self.stats = {
             'score': 'player.score',
             'level': 'int(player.level)',
-            'cleared': 'int((player.level * 10) - 10)'
+            # 'cleared': 'int((player.level * 10) - 10)'
         }
-        self.known_level = 1
+        self.multiplayer = False
 
     def start(self):
-        player = Player()
-        self.event_loop(player)
+        self.player = Player()
+        self.event_loop(self.player)
 
     def event_loop(self, player):
         last_cycle = time.time()
@@ -190,6 +227,8 @@ class Game:
                 if keyboard.is_pressed(self.keymap['drop']):
                     player.cycle(hard_drop=True)
                     self.print_screen(player)
+                if keyboard.is_pressed(self.keymap['hold']):
+                    player.hold()
                 if keyboard.is_pressed(self.keymap['restart']):
                     self.start()
                 if keyboard.is_pressed(self.keymap['quit']):
@@ -224,12 +263,11 @@ class Game:
         row += '┓' if top else '┛'
         return row
 
-    def draw_next(self, player):
-        _, piece_coord = player.next_pieces[-1]
+    def _draw_piece(self, piece_coord, text):
+        assert isinstance(text, str), "Text var must be of type str"
         x_size = len(piece_coord)
         y_size = len(piece_coord[0])
-
-        next_box = [self.border_row(top=True, text='Next', width=RIGHT_SIDE_GRAPHICS_WIDTH)]
+        box = [self.border_row(top=True, text=text, width=RIGHT_SIDE_GRAPHICS_WIDTH)]
 
         for i in reversed(range(x_size)):
             row = ''
@@ -237,15 +275,16 @@ class Game:
                 block = FULL_PIXEL if piece_coord[i][j] != 0 else EMPTY_PIXEL
                 row += block
             row = row.center(RIGHT_SIDE_GRAPHICS_WIDTH).replace('  ', EMPTY_PIXEL)
-            next_box.append(BORDER + row + BORDER)
-        next_box.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
-        return next_box
+            box.append(BORDER + row + BORDER)
+        box.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
+        return box
+
+    def draw_next(self, player):
+        _, piece_coord = player.next_pieces[-1]
+        return self._draw_piece(piece_coord=piece_coord, text='Next')
 
     def draw_hold(self, player):
-        hold = [self.border_row(top=True, text='Hold', width=RIGHT_SIDE_GRAPHICS_WIDTH)]
-        # TODO implement
-        hold.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
-        return hold
+        return self._draw_piece(piece_coord=player.held_piece, text='Hold')
 
     def draw_stats(self, player):
         stats = [self.border_row(top=True, text='Stats', width=RIGHT_SIDE_GRAPHICS_WIDTH)]
@@ -270,8 +309,9 @@ class Game:
         keys.append(self.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
         return keys
 
-    def draw_board(self, player):
-        board = [self.border_row(top=True, text='Tetris', width=WIDTH * CHAR_PRINT_WIDTH)]
+    def _draw_board(self, player, text):
+        assert isinstance(text, str), "Text var must be of type str"
+        board = [self.border_row(top=True, text=text, width=WIDTH * CHAR_PRINT_WIDTH)]
 
         for i in reversed(range(DISPLAYED_HEIGHT)):
             row = BORDER
@@ -283,12 +323,18 @@ class Game:
         board.append(self.border_row(width=WIDTH * CHAR_PRINT_WIDTH))
         return board
 
-    def print_screen(self, player):
+    def draw_my_board(self, player):
+        return self._draw_board(player=player, text='Tetris')
+
+    def _draw_screen(self, player):
         right_side_graphics = self.draw_next(player) + \
                               self.draw_hold(player) + \
                               self.draw_stats(player) + \
                               self.draw_help()
-        board = self.draw_board(player)
+        board = self.draw_my_board(player)
+        return board, right_side_graphics
+
+    def _print_drawings(self, board, right_side_graphics):
         for i in range(len(board)):
             print(board[i], end=' ')
             try:
@@ -296,24 +342,20 @@ class Game:
             except IndexError:
                 print()
 
+    def print_screen(self, player):
+        board, right_side_graphics = self._draw_screen(player=player)
+        self._print_drawings(board=board, right_side_graphics=right_side_graphics)
+
     def print_game_over(self, player):
         # Absolutely crap code, wow
         # TODO actually listen to keystrokes
-        right_side_graphics = self.draw_next(player) + \
-                              self.draw_hold(player) + \
-                              self.draw_stats(player) + \
-                              self.draw_help()
-        board = self.draw_board(player)
+        board, right_side_graphics = self._draw_screen(player=player)
         game_over_row = int(len(board) / 2)
         board[game_over_row + 1] = BORDER + 'Press {0} to quit'.format(self.keymap['quit']).center(
             WIDTH * CHAR_PRINT_WIDTH) + BORDER
         board[game_over_row] = BORDER + 'Restarting...'.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
         board[game_over_row - 1] = BORDER + 'G A M E   O V E R'.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
-        for i in range(len(board)):
-            print(board[i], end=' ')
-            try:
-                print(right_side_graphics[i])
-            except IndexError:
-                print()
+
+        self._print_drawings(board=board, right_side_graphics=right_side_graphics)
         time.sleep(GAME_OVER_TIMEOUT)
         return
