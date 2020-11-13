@@ -1,5 +1,7 @@
-from player import *
 import asyncio
+
+from player import *
+from copy import deepcopy
 
 
 class Game:
@@ -31,6 +33,12 @@ class Game:
             "quit": lambda: self._end_game(should_restart=False),
             "hold": lambda: self.player.hold(),
         }
+        self._game_over_text = [
+            'G A M E   O V E R',
+            'Press any key',
+            'to restart'.format(self._prettify_key(self.keymap['restart'])),
+            'Press {0} to quit'.format(self._prettify_key(self.keymap['quit'])),
+        ]
 
     async def start(self):
         self.player = Player()
@@ -192,4 +200,20 @@ class Game:
         self._print_drawings(board=board, right_side_graphics=right_side_graphics)
 
     def game_over(self):
-        win_rows, win_cols = self.win.getmaxyx()
+        new_graphics = deepcopy(self.board_graphics)
+        mid_row = int(len(new_graphics) / 2)
+
+        for i in range(len(self._game_over_text)):
+            text = self._game_over_text[i]
+            text = BORDER + text.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
+            new_graphics[mid_row + i] = text + new_graphics[mid_row + i][len(text):]
+
+        self._refresh_board(new_graphics=new_graphics)
+        while True:
+            key = self.win.getch()
+            if key == NO_KEY:
+                continue
+            elif key == self.keymap['quit']:
+                self.action_map['quit']()
+            else:
+                self.action_map['restart']()
