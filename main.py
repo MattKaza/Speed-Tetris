@@ -3,10 +3,10 @@ import sys
 import asyncio
 import curses
 
-# if not sys.warnoptions:
-#     import warnings
-#
-#     warnings.simplefilter("ignore")
+if not sys.warnoptions:
+    import warnings
+
+    warnings.simplefilter("ignore")
 
 
 def main(win):
