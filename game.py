@@ -34,10 +34,10 @@ class Game:
             "hold": lambda: self.player.hold(),
         }
         self._game_over_text = [
-            'G A M E   O V E R',
-            'Press any key',
-            'to restart'.format(self._prettify_key(self.keymap['restart'])),
-            'Press {0} to quit'.format(self._prettify_key(self.keymap['quit'])),
+            "G A M E   O V E R",
+            "Press any key",
+            "to restart".format(self._prettify_key(self.keymap["restart"])),
+            "Press {0} to quit".format(self._prettify_key(self.keymap["quit"])),
         ]
 
     async def start(self):
@@ -206,14 +206,14 @@ class Game:
         for i in range(len(self._game_over_text)):
             text = self._game_over_text[i]
             text = BORDER + text.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
-            new_graphics[mid_row + i] = text + new_graphics[mid_row + i][len(text):]
+            new_graphics[mid_row + i] = text + new_graphics[mid_row + i][len(text) :]
 
         self._refresh_board(new_graphics=new_graphics)
         while True:
             key = self.win.getch()
             if key == NO_KEY:
                 continue
-            elif key == self.keymap['quit']:
-                self.action_map['quit']()
+            elif key == self.keymap["quit"]:
+                self.action_map["quit"]()
             else:
-                self.action_map['restart']()
+                self.action_map["restart"]()
