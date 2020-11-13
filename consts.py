@@ -1,4 +1,6 @@
-# Game Elements 
+import curses
+
+# Game Elements
 SHAPES_DICT = {
     'O-Block': [[0, 1, 1, 0], [0, 1, 1, 0]], 
     'I-Block': [[1, 1, 1, 1], [0, 0, 0, 0]],
@@ -14,6 +16,25 @@ SCORE = {
     2: 100,
     3: 300,
     4: 1200
+}
+# IO stuff
+DEFAULT_KEYMAP = {
+            'left': curses.KEY_LEFT,
+            'right': curses.KEY_RIGHT,
+            'down': curses.KEY_DOWN,
+            'rotate': curses.KEY_UP,
+            'drop': ord(' '),
+            'restart': ord('r'),
+            'quit': ord('q'),
+            'hold': ord('l'),
+        }
+NO_KEY = -1
+PRETTY_KEYS = {
+    curses.KEY_LEFT: 'left',
+    curses.KEY_RIGHT: 'right',
+    curses.KEY_DOWN: 'down',
+    curses.KEY_UP: 'up',
+    ord(' '): 'space',
 }
 # This is the tetris approved formula.
 # Am I using eval? Hell yes

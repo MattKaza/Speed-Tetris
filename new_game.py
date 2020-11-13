@@ -1,15 +1,11 @@
 from player import *
-import asyncio
-
+import curses
 
 class Game:
     def __init__(self, stdscr, keymap=DEFAULT_KEYMAP):
         """
         Initialises and starts a game of one player, and prints everything
-        :param stdscr: The curses window object of the game
-        :type stdscr: curses window
         :param keymap: Keymap of this game, defaults to game.DEFAULT_KEYMAP
-        :type keymap: dict
         """
         self.win = stdscr
         self.known_level = 1
@@ -32,12 +28,8 @@ class Game:
             'hold': lambda _: self.player.hold(),
         }
 
-    async def start(self):
+    def start(self):
         self.player = Player()
-        await asyncio.gather(
-            self.cycle(),
-            self.key_hook(),
-        )
 
     def _fall_speed(self):
         # This is the tetris-approved formula
@@ -45,35 +37,15 @@ class Game:
         return eval(FALL_SPEED_FORMULA.format(level=str(self.known_level)))
 
     def _end_game(self, should_restart=True):
-        raise EndGameException(should_restart=should_restart)
+        raise GameOverException(should_restart=should_restart)
 
-    def level_up_check(self):
+    def _level_up_check(self):
         # You might say this entire func is based on an eval finding the variable name it expected
         # And you'd be wrong. It's based on two evals!
         game_level = eval(self.stats['level'])
         if self.known_level != game_level:
             self.known_level = game_level
             self.fall_speed = self._fall_speed()
-
-    async def key_hook(self):
-        while True:
-            # I have no fucking clue why, but if you don't await the sleep
-            # Then cycle() won't get any runtime
-            await asyncio.sleep(0)
-            key = self.win.getch()
-            if key == NO_KEY:
-                continue
-            for item in self.keymap:
-                if key == self.keymap[item]:
-                    self.action_map[item](True)
-                    self.print_screen(self.player)
-
-    async def cycle(self):
-        while True:
-            self.player.cycle()
-            self.print_screen(self.player)
-            self.level_up_check()
-            await asyncio.sleep(self.fall_speed)
 
     @staticmethod
     def _border_row(top=False, text='', width=0):
@@ -83,11 +55,6 @@ class Game:
         row += text.center(width, '━')
         row += '┓' if top else '┛'
         return row
-
-    @staticmethod
-    def _prettify_key(key_code):
-        assert isinstance(key_code, int)
-        return PRETTY_KEYS[key_code] if key_code in PRETTY_KEYS else chr(key_code)
 
     def _draw_piece(self, piece_coord, text):
         assert isinstance(text, str), "Text var must be of type str"
@@ -129,7 +96,7 @@ class Game:
 
         for key in self.keymap:
             row = key.capitalize() + ':'
-            row += self._prettify_key(self.keymap[key]).rjust(RIGHT_SIDE_GRAPHICS_WIDTH - len(row))
+            row += self.keymap[key].rjust(RIGHT_SIDE_GRAPHICS_WIDTH - len(row))
             keys.append(BORDER + row + BORDER)
 
         keys.append(self._border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
@@ -160,17 +127,6 @@ class Game:
         board = self._draw_my_board(player)
         return board, right_side_graphics
 
-    def _refresh_board(self, new_graphics):
-        for i in range(len(new_graphics)):
-            try:
-                if new_graphics[i] != self.board_graphics[i]:
-                    self.win.addstr(i, 0, new_graphics[i])
-            except IndexError:
-                self.win.addstr(i, 0, new_graphics[i])
-
-        self.win.refresh()
-        self.board_graphics = new_graphics
-
     def _print_drawings(self, board, right_side_graphics):
         new_graphics = []
         for i in range(len(board)):
@@ -179,13 +135,12 @@ class Game:
                 row += right_side_graphics[i]
             finally:
                 new_graphics.append(row)
-
-        self._refresh_board(new_graphics=new_graphics)
+        for i in range(len(new_graphics)):
+            if new_graphics[i] != self.board_graphics[i]:
+                self.win.addstr(i, 0, new_graphics[i])
+        self.win.refresh()
+        self.board_graphics = new_graphics
 
     def print_screen(self, player):
         board, right_side_graphics = self._draw_screen(player=player)
         self._print_drawings(board=board, right_side_graphics=right_side_graphics)
-
-    def game_over(self):
-        win_rows, win_cols = self.win.getmaxyx()
-
