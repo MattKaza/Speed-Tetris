@@ -18,18 +18,18 @@ class Game:
         self.keymap = keymap
         self.board_graphics = []
         self.stats = {
-            "score": "self.player.score",
-            "level": "int(self.player.level)",
+            "score": lambda player: player.score,
+            "level": lambda player: int(player.level),
         }
         self.action_map = {
-            "left": lambda _: self.player.move_sideways(-1),
-            "right": lambda _: self.player.move_sideways(1),
-            "down": lambda _: self.player.cycle(),
-            "rotate": lambda _: self.player.rotate(),
-            "drop": lambda _: self.player.cycle(hard_drop=True),
-            "restart": lambda _: self._end_game(should_restart=True),
-            "quit": lambda _: self._end_game(should_restart=False),
-            "hold": lambda _: self.player.hold(),
+            "left": lambda: self.player.move_sideways(-1),
+            "right": lambda: self.player.move_sideways(1),
+            "down": lambda: self.player.cycle(),
+            "rotate": lambda: self.player.rotate(),
+            "drop": lambda: self.player.cycle(hard_drop=True),
+            "restart": lambda: self._end_game(should_restart=True),
+            "quit": lambda: self._end_game(should_restart=False),
+            "hold": lambda: self.player.hold(),
         }
 
     async def start(self):
@@ -41,31 +41,27 @@ class Game:
 
     def _fall_speed(self):
         # This is the tetris-approved formula
-        # It's a really bad idea to use eval and shit here, but it's better than using magics in code
-        return eval(FALL_SPEED_FORMULA.format(level=str(self.known_level)))
+        return FALL_SPEED_FORMULA(level=self.known_level)
 
     def _end_game(self, should_restart=True):
         raise EndGameException(should_restart=should_restart)
 
     def level_up_check(self):
-        # You might say this entire func is based on an eval finding the variable name it expected
-        # And you'd be wrong. It's based on two evals!
-        game_level = eval(self.stats["level"])
+        game_level = self.stats["level"](self.player)
         if self.known_level != game_level:
             self.known_level = game_level
             self.fall_speed = self._fall_speed()
 
     async def key_hook(self):
         while True:
-            # I have no fucking clue why, but if you don't await the sleep
-            # Then cycle() won't get any runtime
+            # Awaiting the sleep() allows the asyncio scheduler to give cycle() some runtime
             await asyncio.sleep(0)
             key = self.win.getch()
             if key == NO_KEY:
                 continue
             for item in self.keymap:
                 if key == self.keymap[item]:
-                    self.action_map[item](True)
+                    self.action_map[item]()
                     self.print_screen(self.player)
 
     async def cycle(self):
@@ -119,8 +115,7 @@ class Game:
 
         for stat in self.stats:
             row = stat.capitalize() + ":"
-            # Yes, eval is bad. Oh well
-            row += str(eval(self.stats[stat])).rjust(
+            row += str(self.stats[stat](self.player)).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
             stats.append(BORDER + row + BORDER)
