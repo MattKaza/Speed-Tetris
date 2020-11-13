@@ -48,10 +48,7 @@ class Player:
                 if self.board[x][y] == LIVE:
                     self.board[x][y] = DEAD
 
-        spawn_area = self.board[
-                     SPAWN[0][0]:SPAWN[0][1],
-                     SPAWN[1][0]:SPAWN[1][1]
-                     ]
+        spawn_area = self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]]
 
         if DEAD in spawn_area:
             raise GameOverException
@@ -63,10 +60,7 @@ class Player:
         spawn_area = piece_coord
         self.centerpoint = DEFAULT_CENTERPOINT
 
-        self.board[
-            SPAWN[0][0]:SPAWN[0][1],
-            SPAWN[1][0]:SPAWN[1][1]
-        ] = spawn_area
+        self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]] = spawn_area
 
     def cycle(self, hard_drop=False):
         try:
@@ -129,7 +123,9 @@ class Player:
     def _clear_active_piece(self):
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
-                self.board[i][j] = EMPTY if self.board[i][j] == LIVE else self.board[i][j]
+                self.board[i][j] = (
+                    EMPTY if self.board[i][j] == LIVE else self.board[i][j]
+                )
 
     def hold(self):
         if self.held_piece_key is not None:
@@ -161,4 +157,4 @@ class Player:
 
     def scorer(self, cleared_rows):
         self.level += 0.1 * cleared_rows
-        self.score += (SCORE[cleared_rows] * int(self.level))
+        self.score += SCORE[cleared_rows] * int(self.level)
