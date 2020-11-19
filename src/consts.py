@@ -24,13 +24,15 @@ DEFAULT_KEYMAP = {
 }
 NO_KEY = -1
 PRETTY_KEYS = {
-    curses.KEY_LEFT: "left",
-    curses.KEY_RIGHT: "right",
-    curses.KEY_DOWN: "down",
-    curses.KEY_UP: "up",
+    curses.KEY_LEFT: "←",
+    curses.KEY_RIGHT: "→",
+    curses.KEY_DOWN: "↓",
+    curses.KEY_UP: "↑",
+    curses.KEY_ENTER: "↵",
     ord(" "): "space",
+    curses.KEY_BACKSPACE: "⟵",
 }
-GAME_OVER_TIMEOUT = 1.5
+GAME_OVER_TIMEOUT = 0.8
 FALL_SPEED_FORMULA = lambda level: (0.8 - ((level - 1) * 0.007)) ** (level - 1)
 # Pixel indices
 EMPTY = 0

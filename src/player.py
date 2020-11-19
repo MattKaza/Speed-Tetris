@@ -1,5 +1,5 @@
-from consts import *
-from exceptions import *
+from src.consts import *
+from src.exceptions import *
 import numpy as np
 
 
@@ -43,11 +43,17 @@ class Player:
         self.next_pieces = np.random.permutation(list(SHAPES_DICT.items()))
 
     def end_round(self):
+        self.kill_active()
+        self.clear_rows()
+        self.spawn_piece()
+
+    def kill_active(self):
         for x in reversed(range(HEIGHT)):
             for y in range(WIDTH):
                 if self.board[x][y] == LIVE:
                     self.board[x][y] = DEAD
 
+    def spawn_piece(self):
         spawn_area = self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]]
 
         if DEAD in spawn_area:
@@ -71,7 +77,6 @@ class Player:
         # Changes object to DEAD if any move is invalid
         except (AssertionError, IndexError):
             self.end_round()
-            self.clear_rows()
 
     def move_sideways(self, multiplier):
         try:

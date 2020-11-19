@@ -1,16 +1,17 @@
 import asyncio
+import utils
 
-from player import *
+from src.player import *
 from copy import deepcopy
 
 
 class Game:
     def __init__(self, stdscr, keymap=DEFAULT_KEYMAP):
         """
-        Initialises and starts a game of one player, and prints everything
-        :param stdscr: The curses window object of the game
+        Initialises and starts a src of one player, and prints everything
+        :param stdscr: The curses window object of the src
         :type stdscr: curses window
-        :param keymap: Keymap of this game, defaults to game.DEFAULT_KEYMAP
+        :param keymap: Keymap of this src, defaults to src.DEFAULT_KEYMAP
         :type keymap: dict
         """
         self.win = stdscr
@@ -36,8 +37,8 @@ class Game:
         self._game_over_text = [
             "G A M E   O V E R",
             "Press any key",
-            "to restart".format(self._prettify_key(self.keymap["restart"])),
-            "Press {0} to quit".format(self._prettify_key(self.keymap["quit"])),
+            "to restart".format(utils.prettify_key(self.keymap["restart"])),
+            "Press {0} to quit".format(utils.prettify_key(self.keymap["quit"])),
         ]
 
     async def start(self):
@@ -80,24 +81,11 @@ class Game:
             await asyncio.sleep(self.fall_speed)
 
     @staticmethod
-    def _border_row(top=False, text="", width=0):
-        row = "┏" if top else "┗"
-        if text:
-            text = " " + text + " "
-        row += text.center(width, "━")
-        row += "┓" if top else "┛"
-        return row
-
-    @staticmethod
-    def _prettify_key(key_code):
-        assert isinstance(key_code, int)
-        return PRETTY_KEYS[key_code] if key_code in PRETTY_KEYS else chr(key_code)
-
-    def _draw_piece(self, piece_coord, text):
+    def _draw_piece(piece_coord, text):
         assert isinstance(text, str), "Text var must be of type str"
         x_size = len(piece_coord)
         y_size = len(piece_coord[0])
-        box = [self._border_row(top=True, text=text, width=RIGHT_SIDE_GRAPHICS_WIDTH)]
+        box = [utils.border_row(top=True, text=text, width=RIGHT_SIDE_GRAPHICS_WIDTH)]
 
         for i in reversed(range(x_size)):
             row = ""
@@ -106,7 +94,7 @@ class Game:
                 row += block
             row = row.center(RIGHT_SIDE_GRAPHICS_WIDTH).replace("  ", EMPTY_PIXEL)
             box.append(BORDER + row + BORDER)
-        box.append(self._border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
+        box.append(utils.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
         return box
 
     def _draw_next(self, player):
@@ -118,7 +106,7 @@ class Game:
 
     def _draw_stats(self):
         stats = [
-            self._border_row(top=True, text="Stats", width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(top=True, text="Stats", width=RIGHT_SIDE_GRAPHICS_WIDTH)
         ]
 
         for stat in self.stats:
@@ -128,27 +116,28 @@ class Game:
             )
             stats.append(BORDER + row + BORDER)
 
-        stats.append(self._border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
+        stats.append(utils.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
         return stats
 
     def _draw_help(self):
         keys = [
-            self._border_row(top=True, text="Help", width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(top=True, text="Help", width=RIGHT_SIDE_GRAPHICS_WIDTH)
         ]
 
         for key in self.keymap:
             row = key.capitalize() + ":"
-            row += self._prettify_key(self.keymap[key]).rjust(
+            row += utils.prettify_key(self.keymap[key]).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
             keys.append(BORDER + row + BORDER)
 
-        keys.append(self._border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
+        keys.append(utils.border_row(width=RIGHT_SIDE_GRAPHICS_WIDTH))
         return keys
 
-    def _draw_board(self, player, text):
+    @staticmethod
+    def _draw_board(player, text):
         assert isinstance(text, str), "Text var must be of type str"
-        board = [self._border_row(top=True, text=text, width=WIDTH * CHAR_PRINT_WIDTH)]
+        board = [utils.border_row(top=True, text=text, width=WIDTH * CHAR_PRINT_WIDTH)]
 
         for i in reversed(range(DISPLAYED_HEIGHT)):
             row = BORDER
@@ -157,7 +146,7 @@ class Game:
                 row += block
             row += BORDER
             board.append(row)
-        board.append(self._border_row(width=WIDTH * CHAR_PRINT_WIDTH))
+        board.append(utils.border_row(width=WIDTH * CHAR_PRINT_WIDTH))
         return board
 
     def _draw_my_board(self, player):
@@ -209,6 +198,7 @@ class Game:
             new_graphics[mid_row + i] = text + new_graphics[mid_row + i][len(text) :]
 
         self._refresh_board(new_graphics=new_graphics)
+        asyncio.run(asyncio.sleep(GAME_OVER_TIMEOUT))
         while True:
             key = self.win.getch()
             if key == NO_KEY:

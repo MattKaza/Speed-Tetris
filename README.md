@@ -12,7 +12,7 @@ TODO:
 * Make keys mappable
 * ~~Don't print arrow input~~
 * ~~Fix movement jankyness~~
-* Fix rotation centerpoint bug
+* ~~Fix rotation centerpoint bug~~
 * ~~Try to rotate again when next to wall~~
 * Rethink centerpoint placement for blocks
 * ~~Implement hard drop~~

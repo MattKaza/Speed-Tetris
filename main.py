@@ -1,29 +1,10 @@
-import game
-import sys
-import asyncio
+from app import app
 import curses
 
-if not sys.warnoptions:
-    import warnings
 
-    warnings.simplefilter("ignore")
-
-
-def main(win):
-    win.nodelay(True)
-    print(type(win))
-    g = game.Game(stdscr=win)
-    try:
-        try:
-            asyncio.run(g.start())
-        except game.GameOverException:
-            g.game_over()
-    except game.EndGameException as e:
-        if e.should_restart:
-            win.clear()
-            main(win)
-    finally:
-        return
+def main(stdscr):
+    a = app.App(stdscr=stdscr, debug=False)
+    a.start_game(stdscr)
 
 
 curses.wrapper(main)
