@@ -204,7 +204,9 @@ class Game:
 
         for number in COUNTDOWN:
             board = utils.border_wrapper(
-                graphics=utils.center_rows(deepcopy(number), active_rows), width=board_cols, text=BOARD_BORDER_TEXT
+                graphics=utils.center_rows(deepcopy(number), active_rows),
+                width=board_cols,
+                text=BOARD_BORDER_TEXT,
             )
             self._print_drawings(board=board, right_side_graphics=right_side_graphics)
             time.sleep(0.6)

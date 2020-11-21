@@ -41,4 +41,4 @@ def center_rows(list_of_rows, height):
 
 
 def initlog():
-    log.basicConfig(filename=app.consts.LOG_FILE_PATH, filemode='w+', level=log.INFO)
+    log.basicConfig(filename=app.consts.LOG_FILE_PATH, filemode="w+", level=log.INFO)

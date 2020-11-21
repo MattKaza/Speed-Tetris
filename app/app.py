@@ -83,7 +83,7 @@ class App:
     def _change_keymap(self, option_id, keymap):
         key = self.stdscr.getch()
         option_name, _ = self.option_maps[-1][option_id]
-        keymap[option_name.split(':')[0].lower()] = key
+        keymap[option_name.split(":")[0].lower()] = key
 
     def _generate_keymap_options(self, keymap):
         options_graphical_list = list(keymap.keys())
@@ -93,12 +93,22 @@ class App:
             options_graphical_list[i] += utils.prettify_key(keymap[key]).rjust(
                 SETTINGS_OPTION_COLUMN_WIDTH - len(options_graphical_list[i])
             )
-        return [(option_name, lambda: self._change_keymap(option_id=self.active_option_index, keymap=keymap)) for option_name in options_graphical_list]
+        return [
+            (
+                option_name,
+                lambda: self._change_keymap(
+                    option_id=self.active_option_index, keymap=keymap
+                ),
+            )
+            for option_name in options_graphical_list
+        ]
 
     def init_settings(self):
         self.active_option_index = 0
         self.screen_printers.append(lambda: self.print_settings_screen())
-        self.option_maps.append(self._generate_keymap_options(keymap=self.player_one_keymap))
+        self.option_maps.append(
+            self._generate_keymap_options(keymap=self.player_one_keymap)
+        )
         for item in self._generate_keymap_options(keymap=self.player_one_keymap):
             utils.log.warning(str(item[-1]))
 
@@ -125,9 +135,13 @@ class App:
         option_graphics = []
         for option_tuple in self.option_maps[-1]:
             if self.option_maps[-1][self.active_option_index] == option_tuple:
-                option_graphics.append("{0} {1}".format(ACTIVE_OPTION, option_tuple[0].title()))
+                option_graphics.append(
+                    "{0} {1}".format(ACTIVE_OPTION, option_tuple[0].title())
+                )
             else:
-                option_graphics.append("{0} {1}".format(EMPTY_OPTION, option_tuple[0].title()))
+                option_graphics.append(
+                    "{0} {1}".format(EMPTY_OPTION, option_tuple[0].title())
+                )
             max_option_len = (
                 len(option_graphics[-1])
                 if len(option_graphics[-1]) > max_option_len
@@ -165,7 +179,9 @@ class App:
 
     def print_settings_screen(self):
         self._init_graphics_xys()
-        self.option_maps[-1] = self._generate_keymap_options(keymap=self.player_one_keymap)
+        self.option_maps[-1] = self._generate_keymap_options(
+            keymap=self.player_one_keymap
+        )
         self.graphics[5] = "Edit game key mappings:"
         self._print_options(distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM)
         self.graphics = utils.border_wrapper(self.graphics, self.cols)

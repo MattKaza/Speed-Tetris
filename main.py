@@ -9,5 +9,7 @@ def main(stdscr, debug=False):
 
 
 parser = argparse.ArgumentParser(description="Run a MATTETRIS server")
-parser.add_argument("--debug", action="store_true", help="Don't suppress warning prints")
+parser.add_argument(
+    "--debug", action="store_true", help="Don't suppress warning prints"
+)
 curses.wrapper(main, parser.parse_args().debug)
