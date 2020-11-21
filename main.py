@@ -4,7 +4,7 @@ import curses
 
 def main(stdscr):
     a = app.App(stdscr=stdscr, debug=False)
-    a.start_game(stdscr)
+    a.main()
 
 
 curses.wrapper(main)
