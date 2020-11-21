@@ -22,6 +22,16 @@ DEFAULT_KEYMAP = {
     "quit": ord("q"),
     "hold": ord("l"),
 }
+SECONDARY_KEYMAP = {
+    "left": ord("a"),
+    "right": ord("d"),
+    "down": ord("s"),
+    "rotate": ord("w"),
+    "drop": ord("e"),
+    "restart": ord("r"),
+    "quit": ord("q"),
+    "hold": ord("`"),
+}
 NO_KEY = -1
 PRETTY_KEYS = {
     curses.KEY_LEFT: "←",

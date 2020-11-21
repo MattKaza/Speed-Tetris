@@ -17,6 +17,8 @@ class Game:
         :type keymap: dict
         """
         self.win = stdscr
+        self.rows = 0
+        self.cols = 0
         self.known_level = 1
         self.fall_speed = self._fall_speed()
         self.player = None
@@ -39,7 +41,7 @@ class Game:
         self._game_over_text = [
             "G A M E   O V E R",
             "Press any key",
-            "to restart".format(utils.prettify_key(self.keymap["restart"])),
+            "to restart",
             "Press {0} to quit".format(utils.prettify_key(self.keymap["quit"])),
         ]
 
@@ -123,7 +125,7 @@ class Game:
     def _draw_help(self):
         keys = []
         for key in self.keymap:
-            row = key.capitalize() + ":"
+            row = key.title() + ":"
             row += utils.prettify_key(self.keymap[key]).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
@@ -163,26 +165,35 @@ class Game:
         for i in range(len(new_graphics)):
             try:
                 if new_graphics[i] != self.board_graphics[i]:
-                    self.win.addstr(i, 0, new_graphics[i])
+                    self.win.insstr(i, 0, new_graphics[i])
             except IndexError:
-                self.win.addstr(i, 0, new_graphics[i])
+                self.win.insstr(i, 0, new_graphics[i])
 
         self.win.refresh()
         self.board_graphics = new_graphics
 
     def _print_drawings(self, board, right_side_graphics):
+        self.rows, self.cols = self.win.getmaxyx()
         new_graphics = []
         for i in range(len(board)):
             row = board[i] + " "
             try:
                 row += right_side_graphics[i]
             finally:
-                new_graphics.append(row)
+                new_graphics.append(row.center(self.cols))
 
-        self._refresh_board(new_graphics=new_graphics)
+        self._refresh_board(new_graphics=utils.center_rows(new_graphics, self.rows))
 
-    def print_screen(self, player):
+    def print_screen(self, player, text_over_board=None):
         board, right_side_graphics = self._draw_screen(player=player)
+
+        if text_over_board is not None:
+            start_row = int((len(board) - len(text_over_board)) / 2)
+            for i in range(len(text_over_board)):
+                text = text_over_board[i]
+                text = BORDER + text.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
+                board[start_row + i] = text
+
         self._print_drawings(board=board, right_side_graphics=right_side_graphics)
 
     def starting_countdown(self):
@@ -192,27 +203,14 @@ class Game:
         board_cols = len(board[0])
 
         for number in COUNTDOWN:
-            local_copy = deepcopy(number)
-            while active_rows - len(local_copy) > 1:
-                local_copy.insert(0, "")
-                while active_rows - len(local_copy) != 0:
-                    local_copy.append("")
             board = utils.border_wrapper(
-                graphics=local_copy, width=board_cols, text=BOARD_BORDER_TEXT
+                graphics=utils.center_rows(deepcopy(number), active_rows), width=board_cols, text=BOARD_BORDER_TEXT
             )
             self._print_drawings(board=board, right_side_graphics=right_side_graphics)
-            time.sleep(1)
+            time.sleep(0.6)
 
     def game_over(self):
-        new_graphics = deepcopy(self.board_graphics)
-        mid_row = int(len(new_graphics) / 2)
-
-        for i in range(len(self._game_over_text)):
-            text = self._game_over_text[i]
-            text = BORDER + text.center(WIDTH * CHAR_PRINT_WIDTH) + BORDER
-            new_graphics[mid_row + i] = text + new_graphics[mid_row + i][len(text) :]
-
-        self._refresh_board(new_graphics=new_graphics)
+        self.print_screen(player=self.player, text_over_board=self._game_over_text)
         asyncio.run(asyncio.sleep(GAME_OVER_TIMEOUT))
         while True:
             key = self.win.getch()

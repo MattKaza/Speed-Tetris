@@ -1,15 +1,18 @@
 TODO:
 * ~~Make KEY_ENTER work~~
 * ~~Slowly print menu on first time~~
-* Retro background for app menu
 * ~~Print options in the middle of active scr~~
 * ~~Graphics for the app menu~~
-* Create the settings menu
 * ~~Implement exit~~
-* Implement return key
+* ~~Have a ready? set? go! screen~~
+* Retro background for app menu
+* Create the settings menu
+* ~~Make keys mappable~~
+* Display keys for both players
+* ~~Implement return key~~
 * Async run local multiplayer
 * Have a "NotImplementedError" screen for online multiplayer
-* ~~Have a ready? set? go! screen~~
+* Add logging and display error if scr to small for game
 
 
 * Create online multiplayer feature
