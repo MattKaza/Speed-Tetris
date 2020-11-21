@@ -97,7 +97,9 @@ class Game:
                 row += block
             row = row.center(RIGHT_SIDE_GRAPHICS_WIDTH).replace("  ", EMPTY_PIXEL)
             box.append(row)
-        return utils.border_wrapper(graphics=box, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=text)
+        return utils.border_wrapper(
+            graphics=box, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=text
+        )
 
     def _draw_next(self, player):
         _, piece_coord = player.next_pieces[-1]
@@ -114,7 +116,9 @@ class Game:
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
             stats.append(row)
-        return utils.border_wrapper(stats, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=STATS_BORDER_TEXT)
+        return utils.border_wrapper(
+            stats, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=STATS_BORDER_TEXT
+        )
 
     def _draw_help(self):
         keys = []
@@ -124,19 +128,23 @@ class Game:
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
             keys.append(row)
-        return utils.border_wrapper(keys, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=HELP_BORDER_TEXT)
+        return utils.border_wrapper(
+            keys, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=HELP_BORDER_TEXT
+        )
 
     @staticmethod
     def _draw_board(player, text):
         assert isinstance(text, str), "Text var must be of type str"
         board = []
         for i in reversed(range(DISPLAYED_HEIGHT)):
-            row = ''
+            row = ""
             for j in range(WIDTH):
                 block = FULL_PIXEL if player.board[i][j] != 0 else EMPTY_PIXEL
                 row += block
             board.append(row)
-        return utils.border_wrapper(board, width=(WIDTH * CHAR_PRINT_WIDTH) + 2, text=text)
+        return utils.border_wrapper(
+            board, width=(WIDTH * CHAR_PRINT_WIDTH) + 2, text=text
+        )
 
     def _draw_my_board(self, player):
         return self._draw_board(player=player, text=BOARD_BORDER_TEXT)
