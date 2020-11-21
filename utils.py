@@ -10,7 +10,7 @@ def border_row(top=False, text="", width=0):
     return row
 
 
-def border_wrapper(graphics, width, text=''):
+def border_wrapper(graphics, width, text=""):
     active_width = width - 2
     for i in range(len(graphics)):
         graphics[i] = (

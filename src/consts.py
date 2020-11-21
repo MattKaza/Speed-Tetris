@@ -60,7 +60,7 @@ HELP_BORDER_TEXT = "Help"
 SEPARATOR = "-" * 30
 CHAR_PRINT_WIDTH = 2
 RIGHT_SIDE_GRAPHICS_WIDTH = (
-        CHAR_PRINT_WIDTH * 8
+    CHAR_PRINT_WIDTH * 8
 )  # Multiplier needs to be even for best results
 BORDER = "┃"
 FULL_PIXEL = "█" * CHAR_PRINT_WIDTH

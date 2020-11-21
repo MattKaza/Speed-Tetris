@@ -109,7 +109,9 @@ class Game:
 
     def _draw_stats(self):
         stats = [
-            utils.border_row(top=True, text=STATS_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(
+                top=True, text=STATS_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH
+            )
         ]
 
         for stat in self.stats:
@@ -124,7 +126,9 @@ class Game:
 
     def _draw_help(self):
         keys = [
-            utils.border_row(top=True, text=HELP_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(
+                top=True, text=HELP_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH
+            )
         ]
 
         for key in self.keymap:
@@ -203,7 +207,9 @@ class Game:
                 local_copy.insert(0, "")
                 while active_rows - len(local_copy) != 0:
                     local_copy.append("")
-            board = utils.border_wrapper(graphics=local_copy, width=board_cols, text=BOARD_BORDER_TEXT)
+            board = utils.border_wrapper(
+                graphics=local_copy, width=board_cols, text=BOARD_BORDER_TEXT
+            )
             self._print_drawings(board=board, right_side_graphics=right_side_graphics)
             time.sleep(1)
 
