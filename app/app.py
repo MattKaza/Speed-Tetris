@@ -22,10 +22,10 @@ class App:
         self.game_keymap = src.consts.DEFAULT_KEYMAP
         self.options_keymap = DEFAULT_OPTIONS_KEYMAP
         self.action_map = {
-            'up': lambda: self._change_index(-1),
-            'down': lambda: self._change_index(1),
-            'select': lambda: self._select(),
-            'select2': lambda: self._select(),
+            "up": lambda: self._change_index(-1),
+            "down": lambda: self._change_index(1),
+            "select": lambda: self._select(),
+            "select2": lambda: self._select(),
             # 'return': TODO
         }
         self.options = [
@@ -89,19 +89,27 @@ class App:
         option_graphics = []
         for option_tuple in self.options:
             if self.options[self.active_option_index] == option_tuple:
-                option_graphics.append('{0} {1}'.format(ACTIVE_OPTION, option_tuple[0]))
+                option_graphics.append("{0} {1}".format(ACTIVE_OPTION, option_tuple[0]))
             else:
-                option_graphics.append('{0} {1}'.format(EMPTY_OPTION, option_tuple[0]))
+                option_graphics.append("{0} {1}".format(EMPTY_OPTION, option_tuple[0]))
 
-            max_option_len = len(option_graphics[-1]) if len(option_graphics[-1]) > max_option_len else max_option_len
+            max_option_len = (
+                len(option_graphics[-1])
+                if len(option_graphics[-1]) > max_option_len
+                else max_option_len
+            )
 
-        distance_from_top = len(self.graphics) - len(option_graphics) - distance_from_bottom
+        distance_from_top = (
+            len(self.graphics) - len(option_graphics) - distance_from_bottom
+        )
         for i in range(len(option_graphics)):
-            self.graphics[i + distance_from_top] = option_graphics[i].ljust(max_option_len)
+            self.graphics[i + distance_from_top] = option_graphics[i].ljust(
+                max_option_len
+            )
 
     def _draw_screen(self):
         self.rows, self.cols = self.stdscr.getmaxyx()
-        self.graphics = [''] * (self.rows - 2)
+        self.graphics = [""] * (self.rows - 2)
         self._print_logo(distance_from_top=LOGO_DISTANCE_FROM_TOP)
         self._print_options(distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM)
         self.graphics = utils.border_wrapper(self.graphics, self.cols)
