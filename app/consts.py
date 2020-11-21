@@ -22,7 +22,7 @@ LOGO_GRAPHICS = [
     "╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝╚══════╝",
 ]
 
-ROW_LOADING_TIMEOUT_PER_CHAR = 0.0015
+# ROW_LOADING_TIMEOUT_PER_CHAR = 0.0015
 ROW_LOADING_TIMEOUT = 0.05
 LOGO_DISTANCE_FROM_TOP = 1
 OPTIONS_DISTANCE_FROM_BOTTOM = 3

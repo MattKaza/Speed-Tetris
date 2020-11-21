@@ -8,7 +8,7 @@ TODO:
 * Implement return key
 * Async run local multiplayer
 * Have a "NotImplementedError" screen for online multiplayer
-* Have a ready? set? go! screen
+* ~~Have a ready? set? go! screen~~
 
 
 * Create online multiplayer feature

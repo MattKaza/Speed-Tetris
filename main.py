@@ -3,7 +3,7 @@ import curses
 
 
 def main(stdscr):
-    a = app.App(stdscr=stdscr, debug=False)
+    a = app.App(stdscr=stdscr, debug=True)
     a.main()
 
 

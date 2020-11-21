@@ -10,13 +10,13 @@ def border_row(top=False, text="", width=0):
     return row
 
 
-def border_wrapper(graphics, width):
+def border_wrapper(graphics, width, text=''):
     active_width = width - 2
     for i in range(len(graphics)):
         graphics[i] = (
             src.consts.BORDER + graphics[i].center(active_width) + src.consts.BORDER
         )
-    graphics.insert(0, border_row(top=True, width=active_width))
+    graphics.insert(0, border_row(top=True, text=text, width=active_width))
     graphics.append(border_row(top=False, width=active_width))
     return graphics
 

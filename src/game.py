@@ -1,4 +1,6 @@
 import asyncio
+import time
+
 import utils
 
 from src.player import *
@@ -43,6 +45,7 @@ class Game:
 
     async def start(self):
         self.player = Player()
+        self.starting_countdown()
         await asyncio.gather(
             self.cycle(),
             self.key_hook(),
@@ -99,14 +102,14 @@ class Game:
 
     def _draw_next(self, player):
         _, piece_coord = player.next_pieces[-1]
-        return self._draw_piece(piece_coord=piece_coord, text="Next")
+        return self._draw_piece(piece_coord=piece_coord, text=NEXT_BORDER_TEXT)
 
     def _draw_hold(self, player):
-        return self._draw_piece(piece_coord=player.held_piece, text="Hold")
+        return self._draw_piece(piece_coord=player.held_piece, text=HOLD_BORDER_TEXT)
 
     def _draw_stats(self):
         stats = [
-            utils.border_row(top=True, text="Stats", width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(top=True, text=STATS_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH)
         ]
 
         for stat in self.stats:
@@ -121,7 +124,7 @@ class Game:
 
     def _draw_help(self):
         keys = [
-            utils.border_row(top=True, text="Help", width=RIGHT_SIDE_GRAPHICS_WIDTH)
+            utils.border_row(top=True, text=HELP_BORDER_TEXT, width=RIGHT_SIDE_GRAPHICS_WIDTH)
         ]
 
         for key in self.keymap:
@@ -150,7 +153,7 @@ class Game:
         return board
 
     def _draw_my_board(self, player):
-        return self._draw_board(player=player, text="Tetris")
+        return self._draw_board(player=player, text=BOARD_BORDER_TEXT)
 
     def _draw_screen(self, player):
         right_side_graphics = (
@@ -187,6 +190,22 @@ class Game:
     def print_screen(self, player):
         board, right_side_graphics = self._draw_screen(player=player)
         self._print_drawings(board=board, right_side_graphics=right_side_graphics)
+
+    def starting_countdown(self):
+        board, right_side_graphics = self._draw_screen(player=self.player)
+        board_rows = len(board)
+        active_rows = board_rows - 2
+        board_cols = len(board[0])
+
+        for number in COUNTDOWN:
+            local_copy = deepcopy(number)
+            while active_rows - len(local_copy) > 1:
+                local_copy.insert(0, "")
+                while active_rows - len(local_copy) != 0:
+                    local_copy.append("")
+            board = utils.border_wrapper(graphics=local_copy, width=board_cols, text=BOARD_BORDER_TEXT)
+            self._print_drawings(board=board, right_side_graphics=right_side_graphics)
+            time.sleep(1)
 
     def game_over(self):
         new_graphics = deepcopy(self.board_graphics)
