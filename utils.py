@@ -1,7 +1,7 @@
 import src.consts
 
 
-def border_row(top=False, text="", width=0):
+def _border_row(top=False, text="", width=0):
     row = "┏" if top else "┗"
     if text:
         text = " " + text + " "
@@ -16,8 +16,8 @@ def border_wrapper(graphics, width, text=""):
         graphics[i] = (
             src.consts.BORDER + graphics[i].center(active_width) + src.consts.BORDER
         )
-    graphics.insert(0, border_row(top=True, text=text, width=active_width))
-    graphics.append(border_row(top=False, width=active_width))
+    graphics.insert(0, _border_row(top=True, text=text, width=active_width))
+    graphics.append(_border_row(top=False, width=active_width))
     return graphics
 
 

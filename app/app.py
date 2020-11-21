@@ -33,6 +33,7 @@ class App:
             ("Local Multiplayer", lambda: self.local_multiplayer()),
             ("Online Multiplayer", lambda: self.online_multiplayer()),
             ("Settings", lambda: self.settings()),
+            ("Exit", lambda: exit()),
         ]
 
     def _change_index(self, diff):
