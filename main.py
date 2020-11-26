@@ -1,10 +1,10 @@
-from app import app
+import app.app
 import curses
 import argparse
 
 
 def main(stdscr, debug=False):
-    a = app.App(stdscr=stdscr, debug=debug)
+    a = app.app.App(stdscr=stdscr, debug=debug)
     a.main()
 
 

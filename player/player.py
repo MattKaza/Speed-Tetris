@@ -1,5 +1,5 @@
-from src.consts import *
-from src.exceptions import *
+from player.consts import *
+from player.exceptions import *
 import numpy as np
 
 
