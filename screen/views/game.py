@@ -1,19 +1,36 @@
+"""
+This module defines the view of the main game, and is used by game.py
+"""
+from typing import Optional, Union, List
+
+import player.player
+import screen.utils as utils
+from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
 from screen.views.game_consts import *
-from screen import utils
 
 
 class GameScreen(Screen):
-    def __init__(self, stdscr, player, keymap, stats_map):
+    def __init__(
+        self,
+        stdscr: CursesWindow,
+        game_player: player.player.Player,
+        keymap: Keymap,
+        stats_map: StatsDict,
+    ):
         super().__init__(stdscr)
-        self.player = player
+        self.player = game_player
         self.keymap = keymap
         self.stats_map = stats_map
 
     @staticmethod
-    def _draw_piece(piece_coord, text, x_size=None, y_size=None, centering_width=None):
-        assert isinstance(text, str), "Text var must be of type str"
-
+    def _draw_piece(
+            piece_coord: List[List[int]],
+            text: str,
+            x_size: Optional[int] = None,
+            y_size: Optional[int] = None,
+            centering_width: Optional[int] = None
+    ):
         if not x_size:
             x_size = len(piece_coord)
 
@@ -37,7 +54,7 @@ class GameScreen(Screen):
     def _draw_stats(self):
         stats = []
         for stat in self.stats_map:
-            row = stat.capitalize() + ":"
+            row = stat.upper() + ":"
             row += str(self.stats_map[stat](self.player)).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
@@ -50,7 +67,7 @@ class GameScreen(Screen):
     def _draw_help(self):
         keys = []
         for key in self.keymap:
-            row = key.title() + ":"
+            row = key.upper() + ":"
             row += utils.prettify_key(self.keymap[key]).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
@@ -59,7 +76,7 @@ class GameScreen(Screen):
             keys, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=HELP_BORDER_TEXT
         )
 
-    def _generate_view(self, text_over_board=None):
+    def _generate_view(self, text_over_board: Optional[str] = None):
         right_side_graphics = (
             #  Next piece
             self._draw_piece(
@@ -98,7 +115,7 @@ class GameScreen(Screen):
             except IndexError:
                 self.graphics.append(board[i])
 
-    def game_over(self, victory, quit_key):
+    def game_over(self, victory: Union[bool, None], quit_key: int):
         formatted_game_over_text = (
             GAME_OVER_TEXT
             if victory is None

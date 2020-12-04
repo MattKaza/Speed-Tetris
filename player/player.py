@@ -1,6 +1,7 @@
 from player.consts import *
 from player.exceptions import *
-import numpy as np
+from typing import Optional, Tuple
+import numpy as np  # type: ignore
 
 
 class Player:
@@ -16,7 +17,7 @@ class Player:
         self.random_generator()
         self.end_round()  # Called to spawn first piece
 
-    def move(self, x_diff=0, y_diff=0):
+    def move(self, x_diff: Optional[int] = 0, y_diff: Optional[int] = 0):
         old_pos = []
         new_pos = []
         # 1st loop, checks all the moves are valid
@@ -68,7 +69,7 @@ class Player:
 
         self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]] = spawn_area
 
-    def cycle(self, hard_drop=False):
+    def cycle(self, hard_drop: Optional[bool] = False):
         try:
             self.move(x_diff=-1)
             while hard_drop:
@@ -78,13 +79,13 @@ class Player:
         except (AssertionError, IndexError):
             self.end_round()
 
-    def move_sideways(self, multiplier):
+    def move_sideways(self, multiplier: int):
         try:
             self.move(y_diff=multiplier)
         except (IndexError, AssertionError):
             pass
 
-    def rotate(self, centerpoint=None, shift=0):
+    def rotate(self, centerpoint: Optional[Tuple[int, int]] = None, shift: Optional[int] = 0):
         if centerpoint is None:
             centerpoint = self.centerpoint
         try:
@@ -141,7 +142,7 @@ class Player:
         self._clear_active_piece()
         self.end_round()
 
-    def is_row_clearable(self, i):
+    def is_row_clearable(self, i: int):
         for j in range(WIDTH):
             if self.board[i][j] != DEAD:
                 return False
@@ -160,6 +161,6 @@ class Player:
 
         self.scorer(cleared_rows)
 
-    def scorer(self, cleared_rows):
+    def scorer(self, cleared_rows: int):
         self.level += 0.1 * cleared_rows
         self.score += SCORE[cleared_rows] * int(self.level)

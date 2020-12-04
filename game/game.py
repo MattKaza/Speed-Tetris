@@ -3,15 +3,16 @@ import screen.views.game
 import player.player
 import player.exceptions
 import curses
-from typing import Dict, Callable, List
+from typing import List, Optional, Union
+from mytyping import Keymap, StatsDict, ActionMap, CursesWindow
 from game.consts import *
 from screen.views.game_consts import COUNTDOWN
 
 
 class GameLazyClass:
-    def __init__(self, stdscr, keymap=DEFAULT_KEYMAP):
+    def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP):
         """
-        Initialises and starts a main of one player, and prints everything
+        Initialises and starts a main of one game_player, and prints everything
         :param stdscr: The curses window object of the main
         :type stdscr: curses window
         :param keymap: Keymap of this main, defaults to main.DEFAULT_KEYMAP
@@ -23,9 +24,9 @@ class GameLazyClass:
         self.player = player.player.Player()
         self.keymap = keymap
         self.stats = {
-            "score": lambda player: player.score,
-            "level": lambda player: int(player.level),
-        }  # type: Dict[str, Callable[[player.player.Player], int]]
+            "score": lambda game_player: game_player.score,
+            "level": lambda game_player: int(game_player.level),
+        }  # type: StatsDict
 
         self.action_map = {
             "left": lambda: self.player.move_sideways(-1),
@@ -36,11 +37,11 @@ class GameLazyClass:
             "restart": lambda: self._end_game(should_restart=True),
             "quit": lambda: self._end_game(should_restart=False),
             "hold": lambda: self.player.hold(),
-        }  # type: Dict[str, Callable[[], None]]
+        }  # type: ActionMap
 
         self.screen = screen.views.game.GameScreen(
             stdscr=self.win,
-            player=self.player,
+            game_player=self.player,
             keymap=self.keymap,
             stats_map=self.stats,
         )  # type: screen.views.game.GameScreen
@@ -49,7 +50,7 @@ class GameLazyClass:
         # This is the tetris-approved formula
         return FALL_SPEED_FORMULA(level=self.known_level)
 
-    def _end_game(self, should_restart=True):
+    def _end_game(self, should_restart: Optional[bool] = True):
         raise player.exceptions.EndGameException(should_restart=should_restart)
 
     def level_up_check(self):
@@ -73,7 +74,7 @@ class GameLazyClass:
             self.screen.print_screen(text_over_board=number)
             await asyncio.sleep(COUNTDOWN_TIMEOUT)
 
-    async def game_over(self, victory=None):
+    async def game_over(self, victory: Optional[bool] = None):
         self.screen.game_over(victory=victory, quit_key=self.keymap["quit"])
         await asyncio.sleep(GAME_OVER_TIMEOUT)
         while True:
@@ -87,7 +88,7 @@ class GameLazyClass:
 
 
 class LocalGame:
-    def __init__(self, stdscr, list_of_keymaps=DEFAULT_KEYMAP):
+    def __init__(self, stdscr: CursesWindow, list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP):
         """
         Creates a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
@@ -98,29 +99,16 @@ class LocalGame:
             list_of_keymaps = [list_of_keymaps]
 
         self.win = stdscr
-        self.list_of_keymaps = list_of_keymaps  # type: List[Dict[str, int]]
+        self.list_of_keymaps = list_of_keymaps  # type: List[Keymap]
         self.players_count = len(self.list_of_keymaps)
 
         self.game_lazy_classes = []  # type: List[GameLazyClass]
         for player_num, keymap in enumerate(self.list_of_keymaps):
             self.game_lazy_classes.append(
                 GameLazyClass(
-                    stdscr=self._get_partial_screen(player_num), keymap=keymap
+                    stdscr=screen.utils.get_partial_screen(self.win, player_num, self.players_count), keymap=keymap
                 )
             )
-
-    def _get_partial_screen(self, player_index):
-        total_rows, total_cols = self.win.getmaxyx()
-        rows_per_screen = total_rows
-        cols_per_screen = int(
-            total_cols / self.players_count
-        )  # int() is rounding by flooring so it's cool
-        return curses.newwin(
-            rows_per_screen,
-            cols_per_screen,
-            0,  # Y axis starting position
-            cols_per_screen * player_index,  # X axis starting position
-        )
 
     async def start(self):
         funcs_to_run = []

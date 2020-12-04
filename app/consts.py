@@ -1,11 +1,13 @@
-import curses
+from curses import KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BACKSPACE
 
 DEFAULT_OPTIONS_KEYMAP = {
     "select": ord("\n"),
     "select2": ord(" "),
-    "up": curses.KEY_UP,
-    "down": curses.KEY_DOWN,
-    "return": curses.KEY_BACKSPACE,
+    "up": KEY_UP,
+    "down": KEY_DOWN,
+    "left": KEY_LEFT,
+    "right": KEY_RIGHT,
+    "return": KEY_BACKSPACE,
     "exit": ord("q"),
 }
 

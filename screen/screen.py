@@ -1,12 +1,20 @@
-import screen.utils
+"""
+This is the base graphics module for the project
+To use this with an existing view, one must call print_screen()
+To create a new view, one must inherit from the class Screen
+and implement the view logic in _generate_view
+"""
 
-# import utils
-from screen.consts import *
 import time
+from typing import Optional
+
+from mytyping import CursesWindow
+import screen.utils
+from screen.consts import *
 
 
 class Screen:
-    def __init__(self, stdscr):
+    def __init__(self, stdscr: CursesWindow):
         self.stdscr = stdscr
         self.rows, self.cols = 0, 0
         self.graphics = []
@@ -25,10 +33,10 @@ class Screen:
 
     def print_screen(
         self,
-        center_screen=True,
-        retro_style=False,
-        wrap_screen=False,
-        wrapper_text="",
+        center_screen: Optional[bool] = True,
+        retro_style: Optional[bool] = False,
+        wrap_screen: Optional[bool] = False,
+        wrapper_text: Optional[str] = "",
         **kwargs
     ):
         """
@@ -57,6 +65,7 @@ class Screen:
                 self.graphics, self.cols, wrapper_text
             )
         if retro_style or self.retro_next_time:
+            self.stdscr.clear()
             for i in range(len(self.graphics)):
                 time.sleep(ROW_LOADING_TIMEOUT)
                 self.stdscr.insstr(i, 0, self.graphics[i])

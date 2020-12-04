@@ -1,7 +1,7 @@
-import getopt
-import paramiko
-import socket
-import threading
+# import getopt
+# import paramiko
+# import socket
+# import threading
 
 #
 # def main():
