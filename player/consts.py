@@ -1,3 +1,6 @@
+"""
+Here are consts relating to the operation of the player module
+"""
 # Game Elements
 SHAPES_DICT = {
     "O-Block": [[0, 1, 1, 0], [0, 1, 1, 0]],
@@ -7,7 +10,7 @@ SHAPES_DICT = {
     "S-Block": [[1, 1, 0, 0], [0, 1, 1, 0]],
     "Z-Block": [[0, 1, 1, 0], [1, 1, 0, 0]],
     "T-Block": [[1, 1, 1, 0], [0, 1, 0, 0]],
-}
+    }
 SCORE = {0: 0, 1: 40, 2: 100, 3: 300, 4: 1200}
 
 # Pixel indices
@@ -23,7 +26,7 @@ SPAWN_SIZE = [2, 4]
 SPAWN = [
     [SPAWN_EDGE[0], SPAWN_EDGE[0] + SPAWN_SIZE[0]],
     [SPAWN_EDGE[1], SPAWN_EDGE[1] + SPAWN_SIZE[1]],
-]
+    ]
 DEFAULT_CENTERPOINT = (SPAWN_EDGE[0] + 0, SPAWN_EDGE[1] + 1)
 
 # Aesthetic things

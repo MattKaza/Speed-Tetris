@@ -1,3 +1,8 @@
+"""
+One day, this will be the module that implements the online serving of the app.
+Today is not that day.
+"""
+
 # import getopt
 # import paramiko
 # import socket

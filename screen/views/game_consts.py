@@ -1,3 +1,6 @@
+"""
+Here are graphical consts related to views of the game module
+"""
 import player.consts
 
 # Pixel indices
@@ -18,13 +21,13 @@ HELP_BORDER_TEXT = "Help"
 # SEPARATOR = "-" * 30
 PIXEL_SIZE = 2
 RIGHT_SIDE_GRAPHICS_WIDTH = (
-    PIXEL_SIZE * 8
-)  # Multiplier needs to be even for best results
+        PIXEL_SIZE * 8
+    )  # Multiplier needs to be even for best results
 BORDER = "┃"
 FULL_PIXEL = "█" * PIXEL_SIZE
 EMPTY_PIXEL = "".join(
     reversed("·".center(PIXEL_SIZE))
-)  # Reversed because I like the right-tending alignment better
+    )  # Reversed because I like the right-tending alignment better
 
 # Graphical displays
 GAME_OVER_TEXT = [
@@ -32,19 +35,19 @@ GAME_OVER_TEXT = [
     "Press any key",
     "to restart",
     "Press {0} to quit",
-]
+    ]
 YOU_WON_TEXT = [
     "You won !",
     "Press any key",
     "to restart",
     "Press {0} to quit",
-]
+    ]
 YOU_LOST_TEXT = [
     "You lost :(",
     "Press any key",
     "to restart",
     "Press {0} to quit",
-]
+    ]
 
 COUNTDOWN = [
     [
@@ -64,7 +67,7 @@ COUNTDOWN = [
         "3::::::33333::::::3",
         "3:::::::::::::::33 ",
         " 333333333333333   ",
-    ],
+        ],
     [
         " 222222222222222    ",
         "2:::::::::::::::22  ",
@@ -82,7 +85,7 @@ COUNTDOWN = [
         "2::::::2222222:::::2",
         "2::::::::::::::::::2",
         "22222222222222222222",
-    ],
+        ],
     [
         "  1111111   ",
         " 1::::::1   ",
@@ -100,5 +103,5 @@ COUNTDOWN = [
         "1::::::::::1",
         "1::::::::::1",
         "111111111111",
-    ],
-]
+        ],
+    ]

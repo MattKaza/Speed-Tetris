@@ -1,3 +1,6 @@
+"""
+Here complex types are defined for type hints later on
+"""
 import curses
 from typing import Any, Callable, Dict, List, Tuple
 

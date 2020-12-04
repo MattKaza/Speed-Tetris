@@ -1,3 +1,6 @@
+"""
+This module is the app, which is what handles menus and game options and the likes
+"""
 import asyncio
 import sys
 from typing import List
@@ -12,6 +15,10 @@ from mytyping import ActionMap, CursesWindow, Keymap, OptionMap
 
 
 class App:
+    """
+    This is the App class, which handles the creation of game objects according to user preferences,
+    as well as in charge of displaying all the option menus and the likes
+    """
     def __init__(self, stdscr: CursesWindow, debug: bool = False):
         if not debug and not sys.warnoptions:
             import warnings
@@ -26,15 +33,15 @@ class App:
         self.player_two_keymap = game.consts.SECONDARY_KEYMAP  # type: Keymap
         self.options_keymap = DEFAULT_OPTIONS_KEYMAP  # type: Keymap
         self.action_map = {
-            "up": lambda: self._change_horizontal_index(-1),
-            "down": lambda: self._change_horizontal_index(1),
-            "right": lambda: self._change_vertical_index(1),
-            "left": lambda: self._change_vertical_index(-1),
-            "select": lambda: self._select(),
+            "up"     : lambda: self._change_horizontal_index(-1),
+            "down"   : lambda: self._change_horizontal_index(1),
+            "right"  : lambda: self._change_vertical_index(1),
+            "left"   : lambda: self._change_vertical_index(-1),
+            "select" : lambda: self._select(),
             "select2": lambda: self._select(),
-            "return": lambda: self._return(),
-            "exit": lambda: exit(),
-        }  # type: ActionMap
+            "return" : lambda: self._return(),
+            "exit"   : lambda: exit(),
+            }  # type: ActionMap
 
         self.main_menu_option = [
             ("Single Player", lambda: self.single_player()),
@@ -42,11 +49,11 @@ class App:
             ("Online Multiplayer", lambda: self.online_multiplayer()),
             ("Settings and Controls", lambda: self.init_settings()),
             ("Exit", lambda: exit()),
-        ]  # type: OptionMap
+            ]  # type: OptionMap
 
         self.views = [
             screen.views.app.MainAppScreen(self.stdscr, self.main_menu_option)
-        ]  # type: List[screen.views.app.AppScreenLazyClass]
+            ]  # type: List[screen.views.app.AppScreenLazyClass]
 
         self.option_maps = [self.main_menu_option]  # type: List[OptionMap]
         utils.initlog(LOG_FILE_PATH)
@@ -72,6 +79,9 @@ class App:
             self.views[-1].retro_ok()
 
     def act_on_key_press(self):
+        """
+        This function busy-waits for a keypress and then acts accordingly
+        """
         key = self.stdscr.getch()
         for item in self.options_keymap:
             if key == self.options_keymap[item]:
@@ -86,24 +96,27 @@ class App:
     def _generate_keymap_options(self, keymap: Keymap):
         return [
             (key, lambda: self._change_keymap(keymap=keymap)) for key in keymap.keys()
-        ]
+            ]
 
     def init_settings(self):
+        """
+        This function is called when starting the settings screen, and initializes it by appending to the right lists
+        """
         self.horizontal_option_index = 0
         self.views.append(
             screen.views.app.SettingsAppScreen(
                 stdscr=self.stdscr, keymap=self.player_one_keymap
+                )
             )
-        )
         self.views[-1].retro_ok()
         self.option_maps.append(
             self._generate_keymap_options(keymap=self.player_one_keymap)
-        )
+            )
 
     def _run_local_game(self, list_of_keymaps: List[Keymap]):
         self.stdscr.clear()
         self.stdscr.nodelay(True)
-        utils.log.info("Initting Game")
+        utils.log.info("Initializing Game")
         g = game.game.LocalGame(stdscr=self.stdscr, list_of_keymaps=list_of_keymaps)
         try:
             try:
@@ -116,17 +129,29 @@ class App:
                 self._run_local_game(list_of_keymaps)
 
     def online_multiplayer(self):
+        """
+        This func is called when the user chooses the online multiplayer option
+        """
         pass
 
     def local_multiplayer(self):
+        """
+        This func is called when the user chooses the local multiplayer option
+        """
         self._run_local_game(
             list_of_keymaps=[self.player_two_keymap, self.player_one_keymap]
-        )
+            )
 
     def single_player(self):
+        """
+        This func is called when the user chooses the single player option
+        """
         self._run_local_game(list_of_keymaps=[self.player_one_keymap])
 
     def main(self):
+        """
+        This is the main "event loop" of the app. It initializes the menu and then acts according to key presses
+        """
         self.views[-1].print_screen(wrap_screen=True, retro_style=True)
         while True:
             self.act_on_key_press()

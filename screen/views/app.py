@@ -1,6 +1,7 @@
 """
 Here are various views of app.py screens, all inheriting from AppScreenLazyClass
 """
+from abc import ABC
 
 import screen.utils as utils
 from mytyping import CursesWindow, Keymap, OptionMap
@@ -9,10 +10,13 @@ from screen.views.app_consts import (
     LOGO_GRAPHICS, ACTIVE_OPTION, EMPTY_OPTION,
     LOGO_DISTANCE_FROM_TOP, OPTIONS_DISTANCE_FROM_BOTTOM, SETTINGS_OPTION_COLUMN_WIDTH,
     SETTINGS_HEADER_DISTANCE_FROM_TOP,
-)
+    )
 
 
-class AppScreenLazyClass(Screen):
+class AppScreenLazyClass(Screen, ABC):
+    """
+    This is the base class of an app menu view
+    """
     def __init__(self, stdscr: CursesWindow):
         super().__init__(stdscr)
         self.active_option = 0
@@ -33,8 +37,8 @@ class AppScreenLazyClass(Screen):
                 "{0} {1}".format(
                     ACTIVE_OPTION if i == self.active_option else EMPTY_OPTION,
                     self.options[i].upper(),
+                    )
                 )
-            )
             max_option_len = max(len(option_graphics[-1]), max_option_len)
 
         distance_from_top = self.rows - 2 - len(option_graphics) - distance_from_bottom
@@ -45,10 +49,18 @@ class AppScreenLazyClass(Screen):
             self.graphics.append(option_graphics[i].ljust(max_option_len))
 
     def set_active_option(self, active_option: int):
+        """
+        This function exposes the option to change the current active option, for display purposes.
+        :param active_option:  int, the horizontal index of the currently active option
+        :return: None
+        """
         self.active_option = active_option
 
 
 class MainAppScreen(AppScreenLazyClass):
+    """
+    This is the view of the main screen of the app module
+    """
     def __init__(self, stdscr: CursesWindow, menu_options: OptionMap):
         super().__init__(stdscr=stdscr)
         self.options = [option_name for option_name, _ in menu_options]
@@ -59,6 +71,9 @@ class MainAppScreen(AppScreenLazyClass):
 
 
 class SettingsAppScreen(AppScreenLazyClass):
+    """
+    This is the view of the settings screen of the app module
+    """
     def __init__(self, stdscr: CursesWindow, keymap: Keymap):
         super().__init__(stdscr=stdscr)
         self.keymap = keymap
@@ -70,7 +85,7 @@ class SettingsAppScreen(AppScreenLazyClass):
             key_list[i] += ": "
             key_list[i] += utils.prettify_key(self.keymap[key]).rjust(
                 SETTINGS_OPTION_COLUMN_WIDTH - len(key_list[i])
-            )
+                )
         return key_list
 
     def _generate_view(self):
@@ -81,4 +96,10 @@ class SettingsAppScreen(AppScreenLazyClass):
         self._print_options(distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM)
 
     def set_keymap(self, keymap: Keymap):
+        """
+        This exposes the option to set a new keymap, for example when dynamically changing the keymap in the settings
+        :param keymap: the keymap to display
+        :type keymap: as in "mytyping.Keymap"
+        :return:
+        """
         self.keymap = keymap

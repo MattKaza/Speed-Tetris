@@ -1,3 +1,8 @@
+"""
+This is the game module, it is in charge of the dynamic game logic - reacting to events, running the event loop, etc.
+It is composed of a GameLazyClass implementing the logic,
+    and of classes running the event loop according to the game mode (single player, local / online multiplayer, etc.)
+"""
 import asyncio
 from typing import List, Optional, Union
 
@@ -7,12 +12,15 @@ import screen.views.game
 from game.consts import (
     DEFAULT_KEYMAP, fall_speed_formula, COUNTDOWN_TIMEOUT,
     GAME_OVER_TIMEOUT, NO_KEY,
-)
+    )
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_consts import COUNTDOWN
 
 
 class GameLazyClass:
+    """
+    This is the GameLazyClass, in charge of implementing the logic of interactions with the player module
+    """
     def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP):
         """
         Initialises and starts a main of one game_player, and prints everything
@@ -29,25 +37,25 @@ class GameLazyClass:
         self.stats = {
             "score": lambda game_player: game_player.score,
             "level": lambda game_player: int(game_player.level),
-        }  # type: StatsDict
+            }  # type: StatsDict
 
         self.action_map = {
-            "left": lambda: self.player.move_sideways(-1),
-            "right": lambda: self.player.move_sideways(1),
-            "down": lambda: self.player.cycle(),
-            "rotate": lambda: self.player.rotate(),
-            "drop": lambda: self.player.cycle(hard_drop=True),
+            "left"   : lambda: self.player.move_sideways(-1),
+            "right"  : lambda: self.player.move_sideways(1),
+            "down"   : lambda: self.player.cycle(),
+            "rotate" : lambda: self.player.rotate(),
+            "drop"   : lambda: self.player.cycle(hard_drop=True),
             "restart": lambda: self._end_game(should_restart=True),
-            "quit": lambda: self._end_game(should_restart=False),
-            "hold": lambda: self.player.hold(),
-        }  # type: ActionMap
+            "quit"   : lambda: self._end_game(should_restart=False),
+            "hold"   : lambda: self.player.hold(),
+            }  # type: ActionMap
 
         self.screen = screen.views.game.GameScreen(
             stdscr=self.win,
             game_player=self.player,
             keymap=self.keymap,
             stats_map=self.stats,
-        )  # type: screen.views.game.GameScreen
+            )  # type: screen.views.game.GameScreen
 
     def _fall_speed(self):
         # This is the tetris-approved formula
@@ -57,12 +65,19 @@ class GameLazyClass:
         raise player.exceptions.EndGameException(should_restart=should_restart)
 
     def level_up_check(self):
+        """
+        This function checks the current level of the player using the related lambda in the stats map
+        If the player level has changed, it changes the level attr and the fall speed of tetrominos
+        """
         game_level = self.stats["level"](self.player)
         if self.known_level != game_level:
             self.known_level = game_level
             self.fall_speed = self._fall_speed()
 
     async def cycle(self):
+        """
+        This is the function in charge of implementing the game cycle logic.
+        """
         while True:
             await asyncio.sleep(0)
             self.player.cycle()
@@ -73,11 +88,18 @@ class GameLazyClass:
             await asyncio.sleep(self.fall_speed)
 
     async def start_countdown(self):
+        """
+        This function starts the starting countdown when summoned, and should be called on game start.
+        """
         for number in COUNTDOWN:
             self.screen.print_screen(text_over_board=number)
             await asyncio.sleep(COUNTDOWN_TIMEOUT)
 
     async def game_over(self, victory: Optional[bool] = None):
+        """
+        This function prints the game over annotation, and should be called when the game is over.
+        :param victory: Whether to display a winning or losing text. Displays neutral text when None.
+        """
         self.screen.game_over(victory=victory, quit_key=self.keymap["quit"])
         await asyncio.sleep(GAME_OVER_TIMEOUT)
         while True:
@@ -91,11 +113,15 @@ class GameLazyClass:
 
 
 class LocalGame:
+    """
+    This class implements a local game, with one or more players.
+    The amount of players is defined by how many keymaps are given on init.
+    """
     def __init__(
-        self,
-        stdscr: CursesWindow,
-        list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
-    ):
+            self,
+            stdscr: CursesWindow,
+            list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
+            ):
         """
         Create a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
@@ -115,12 +141,16 @@ class LocalGame:
                 GameLazyClass(
                     stdscr=screen.utils.get_partial_screen(
                         self.win, player_num, self.players_count
-                    ),
+                        ),
                     keymap=keymap,
+                    )
                 )
-            )
 
     async def start(self):
+        """
+        This is what is called to init the relevant GameLazyClasses and start the game properly.
+        :return:
+        """
         funcs_to_run = []
         for game_lazy_class in self.game_lazy_classes:
             funcs_to_run.append(game_lazy_class.start_countdown())
@@ -132,6 +162,11 @@ class LocalGame:
         await asyncio.gather(*funcs_to_run)
 
     async def key_hook(self):
+        """
+        This function is looping around and waits for key presses in a non-blocking manner, receiving NO_KEY if no key
+        was pressed.
+        On key press, this reacts according to the first fitting entry in one of the keymaps.
+        """
         while True:
             # Awaiting the sleep() allows the asyncio scheduler to context switch us
             await asyncio.sleep(0)
@@ -145,6 +180,9 @@ class LocalGame:
                         self.game_lazy_classes[player_num].screen.print_screen()
 
     async def game_over(self):
+        """
+        This is called on game over, to init the game over logic on all the GameLazyClasses
+        """
         funcs_to_run = []
         for game_lazy_class in self.game_lazy_classes:
             funcs_to_run.append(game_lazy_class.game_over())

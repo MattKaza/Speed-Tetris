@@ -7,19 +7,25 @@ import player.player
 import screen.utils as utils
 from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
-from screen.views.game_consts import PIXEL_SIZE, FULL_PIXEL, EMPTY, EMPTY_PIXEL, \
-    RIGHT_SIDE_GRAPHICS_WIDTH, STATS_BORDER_TEXT, HELP_BORDER_TEXT, NEXT_BORDER_TEXT, \
-    HOLD_BORDER_TEXT, DISPLAYED_HEIGHT, BOARD_BORDER_TEXT, BORDER, GAME_OVER_TEXT, \
-    YOU_WON_TEXT, YOU_LOST_TEXT
+from screen.views.game_consts import (
+    PIXEL_SIZE, FULL_PIXEL, EMPTY, EMPTY_PIXEL,
+    RIGHT_SIDE_GRAPHICS_WIDTH, STATS_BORDER_TEXT, HELP_BORDER_TEXT, NEXT_BORDER_TEXT,
+    HOLD_BORDER_TEXT, DISPLAYED_HEIGHT, BOARD_BORDER_TEXT, BORDER, GAME_OVER_TEXT,
+    YOU_WON_TEXT, YOU_LOST_TEXT,
+)
 
 
 class GameScreen(Screen):
+    """
+    This implements the view of the game module
+    """
+
     def __init__(
-        self,
-        stdscr: CursesWindow,
-        game_player: player.player.Player,
-        keymap: Keymap,
-        stats_map: StatsDict,
+            self,
+            stdscr: CursesWindow,
+            game_player: player.player.Player,
+            keymap: Keymap,
+            stats_map: StatsDict,
     ):
         super().__init__(stdscr)
         self.player = game_player
@@ -28,11 +34,11 @@ class GameScreen(Screen):
 
     @staticmethod
     def _draw_piece(
-        piece_coord: List[List[int]],
-        text: str,
-        x_size: Optional[int] = None,
-        y_size: Optional[int] = None,
-        centering_width: Optional[int] = None,
+            piece_coord: List[List[int]],
+            text: str,
+            x_size: Optional[int] = None,
+            y_size: Optional[int] = None,
+            centering_width: Optional[int] = None,
     ):
         if not x_size:
             x_size = len(piece_coord)
@@ -57,7 +63,7 @@ class GameScreen(Screen):
             graphics=box,
             width=centering_width + 2,
             text=text
-            )
+        )
 
     def _draw_stats(self):
         stats = []
@@ -124,6 +130,11 @@ class GameScreen(Screen):
                 self.graphics.append(board[i])
 
     def game_over(self, victory: Union[bool, None], quit_key: int):
+        """
+        This is how you init the game over graphics.
+        :param victory: Whether to display a winning or losing text. Displays neutral text when None.
+        :param quit_key: The index of the key used to quit.
+        """
         formatted_game_over_text = (
             GAME_OVER_TEXT
             if victory is None

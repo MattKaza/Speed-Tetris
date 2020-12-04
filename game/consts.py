@@ -1,26 +1,29 @@
+"""
+Here are consts relating to the operation of the game module
+"""
 from curses import KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP
 
 # IO stuff
 DEFAULT_KEYMAP = {
-    "left": KEY_LEFT,
-    "right": KEY_RIGHT,
-    "down": KEY_DOWN,
-    "rotate": KEY_UP,
-    "drop": ord(" "),
-    "hold": ord("l"),
+    "left"   : KEY_LEFT,
+    "right"  : KEY_RIGHT,
+    "down"   : KEY_DOWN,
+    "rotate" : KEY_UP,
+    "drop"   : ord(" "),
+    "hold"   : ord("l"),
     "restart": ord("r"),
-    "quit": ord("q"),
-}
+    "quit"   : ord("q"),
+    }
 SECONDARY_KEYMAP = {
-    "left": ord("a"),
-    "right": ord("d"),
-    "down": ord("s"),
-    "rotate": ord("w"),
-    "drop": ord("e"),
-    "hold": ord("`"),
+    "left"   : ord("a"),
+    "right"  : ord("d"),
+    "down"   : ord("s"),
+    "rotate" : ord("w"),
+    "drop"   : ord("e"),
+    "hold"   : ord("`"),
     "restart": ord("r"),
-    "quit": ord("q"),
-}
+    "quit"   : ord("q"),
+    }
 # Game consts
 NO_KEY = -1
 GAME_OVER_TIMEOUT = 0.8
