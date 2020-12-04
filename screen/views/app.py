@@ -5,7 +5,11 @@ Here are various views of app.py screens, all inheriting from AppScreenLazyClass
 import screen.utils as utils
 from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
-from screen.views.app_consts import *
+from screen.views.app_consts import (
+    LOGO_GRAPHICS, ACTIVE_OPTION, EMPTY_OPTION,
+    LOGO_DISTANCE_FROM_TOP, OPTIONS_DISTANCE_FROM_BOTTOM, SETTINGS_OPTION_COLUMN_WIDTH,
+    SETTINGS_HEADER_DISTANCE_FROM_TOP,
+)
 
 
 class AppScreenLazyClass(Screen):

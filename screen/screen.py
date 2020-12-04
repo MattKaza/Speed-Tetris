@@ -10,7 +10,7 @@ from typing import Optional
 
 import screen.utils
 from mytyping import CursesWindow
-from screen.consts import *
+from screen.consts import ROW_LOADING_TIMEOUT
 
 
 class Screen:
@@ -42,7 +42,7 @@ class Screen:
         """
         Updates the current screen
         :param center_screen: bool, Whether to center the printed screen or not
-        :param retro_style: bool, If true waits for ROW_LOADING_TIMEOUT before printing the next row
+        :param retro_style: bool, If true waits for ROW_LOADING_TIMEOUT before next row
         :param wrap_screen: bool, If true wraps the screen with a border
         :param wrapper_text: str, Is the text to be displayed in the screen wrapper
         :param kwargs: Keyword arguments to be passed onwards to self.generate_view

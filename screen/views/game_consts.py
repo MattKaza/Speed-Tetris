@@ -1,7 +1,9 @@
+import player.consts
+
 # Pixel indices
-EMPTY = 0
-LIVE = 1
-DEAD = 2
+EMPTY = player.consts.EMPTY
+LIVE = player.consts.LIVE
+DEAD = player.consts.DEAD
 
 # Board indices
 DISPLAYED_HEIGHT = 20

@@ -2,8 +2,14 @@ from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 
-from player.consts import *
-from player.exceptions import *
+from player.consts import (
+    EMPTY_SHAPE, WIDTH, HEIGHT, LIVE, DEAD, EMPTY, SHAPES_DICT,
+    SPAWN, DEFAULT_CENTERPOINT, SCORE,
+)
+from player.exceptions import (
+    GameOverException, BlockOverlapException,
+    OutOfBoundsException,
+)
 
 
 class Player:

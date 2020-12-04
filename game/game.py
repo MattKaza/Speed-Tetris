@@ -1,11 +1,13 @@
 import asyncio
-import curses
 from typing import List, Optional, Union
 
 import player.exceptions
 import player.player
 import screen.views.game
-from game.consts import *
+from game.consts import (
+    DEFAULT_KEYMAP, fall_speed_formula, COUNTDOWN_TIMEOUT,
+    GAME_OVER_TIMEOUT, NO_KEY,
+)
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_consts import COUNTDOWN
 
@@ -49,7 +51,7 @@ class GameLazyClass:
 
     def _fall_speed(self):
         # This is the tetris-approved formula
-        return FALL_SPEED_FORMULA(level=self.known_level)
+        return fall_speed_formula(level=self.known_level)
 
     def _end_game(self, should_restart: Optional[bool] = True):
         raise player.exceptions.EndGameException(should_restart=should_restart)
@@ -95,7 +97,7 @@ class LocalGame:
         list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
     ):
         """
-        Creates a local game, with the players amount being the length of list_of_keymaps
+        Create a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
         :param list_of_keymaps: a list of keymap-type dictionaries
         """
@@ -131,7 +133,7 @@ class LocalGame:
 
     async def key_hook(self):
         while True:
-            # Awaiting the sleep() allows the asyncio scheduler to give cycle() some runtime
+            # Awaiting the sleep() allows the asyncio scheduler to context switch us
             await asyncio.sleep(0)
             key = self.win.getch()
             if key == NO_KEY:

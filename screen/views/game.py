@@ -7,7 +7,10 @@ import player.player
 import screen.utils as utils
 from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
-from screen.views.game_consts import *
+from screen.views.game_consts import PIXEL_SIZE, FULL_PIXEL, EMPTY, EMPTY_PIXEL, \
+    RIGHT_SIDE_GRAPHICS_WIDTH, STATS_BORDER_TEXT, HELP_BORDER_TEXT, NEXT_BORDER_TEXT, \
+    HOLD_BORDER_TEXT, DISPLAYED_HEIGHT, BOARD_BORDER_TEXT, BORDER, GAME_OVER_TEXT, \
+    YOU_WON_TEXT, YOU_LOST_TEXT
 
 
 class GameScreen(Screen):
@@ -49,7 +52,12 @@ class GameScreen(Screen):
                 row += block
             row = row.center(centering_width).replace("  ", EMPTY_PIXEL)
             box.append(row)
-        return utils.border_wrapper(graphics=box, width=centering_width + 2, text=text)
+
+        return utils.border_wrapper(
+            graphics=box,
+            width=centering_width + 2,
+            text=text
+            )
 
     def _draw_stats(self):
         stats = []

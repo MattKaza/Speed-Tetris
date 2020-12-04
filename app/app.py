@@ -7,7 +7,7 @@ import game.game
 import player.exceptions
 import screen.views.app
 import utils
-from app.consts import *
+from app.consts import DEFAULT_OPTIONS_KEYMAP, LOG_FILE_PATH
 from mytyping import ActionMap, CursesWindow, Keymap, OptionMap
 
 

@@ -25,4 +25,12 @@ SECONDARY_KEYMAP = {
 NO_KEY = -1
 GAME_OVER_TIMEOUT = 0.8
 COUNTDOWN_TIMEOUT = 0.6
-FALL_SPEED_FORMULA = lambda level: (0.8 - ((level - 1) * 0.007)) ** (level - 1)
+
+
+def fall_speed_formula(level: int):
+    """
+    The tetris-approved formula for fall speed calculation
+    :param level: The current level of the player
+    :return: The time to wait before another fall cycle
+    """
+    return (0.8 - ((level - 1) * 0.007)) ** (level - 1)
