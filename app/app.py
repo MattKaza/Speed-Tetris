@@ -13,6 +13,7 @@ class App:
     def __init__(self, stdscr, debug=False):
         if not debug and not sys.warnoptions:
             import warnings
+
             warnings.simplefilter("ignore")
 
         self.stdscr = stdscr
@@ -42,7 +43,9 @@ class App:
             screen.views.app.MainAppScreen(self.stdscr, self.main_menu_option)
         ]  # type: List[screen.views.app.AppScreenLazyClass]
 
-        self.option_maps = [self.main_menu_option]  # type: List[List[Tuple[str, Callable[[], None]]]]
+        self.option_maps = [
+            self.main_menu_option
+        ]  # type: List[List[Tuple[str, Callable[[], None]]]]
         utils.initlog(LOG_FILE_PATH)
 
     def _change_index(self, diff):
@@ -110,7 +113,9 @@ class App:
         pass
 
     def local_multiplayer(self):
-        self._run_local_game(list_of_keymaps=[self.player_two_keymap, self.player_one_keymap])
+        self._run_local_game(
+            list_of_keymaps=[self.player_two_keymap, self.player_one_keymap]
+        )
 
     def single_player(self):
         self._run_local_game(list_of_keymaps=[self.player_one_keymap])

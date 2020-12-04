@@ -103,17 +103,23 @@ class LocalGame:
 
         self.game_lazy_classes = []  # type: List[GameLazyClass]
         for player_num, keymap in enumerate(self.list_of_keymaps):
-            self.game_lazy_classes.append(GameLazyClass(stdscr=self._get_partial_screen(player_num), keymap=keymap))
+            self.game_lazy_classes.append(
+                GameLazyClass(
+                    stdscr=self._get_partial_screen(player_num), keymap=keymap
+                )
+            )
 
     def _get_partial_screen(self, player_index):
         total_rows, total_cols = self.win.getmaxyx()
         rows_per_screen = total_rows
-        cols_per_screen = int(total_cols / self.players_count)  # int() is rounding by flooring so it's cool
+        cols_per_screen = int(
+            total_cols / self.players_count
+        )  # int() is rounding by flooring so it's cool
         return curses.newwin(
             rows_per_screen,
             cols_per_screen,
             0,  # Y axis starting position
-            cols_per_screen * player_index  # X axis starting position
+            cols_per_screen * player_index,  # X axis starting position
         )
 
     async def start(self):

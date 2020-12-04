@@ -99,7 +99,13 @@ class GameScreen(Screen):
                 self.graphics.append(board[i])
 
     def game_over(self, victory, quit_key):
-        formatted_game_over_text = GAME_OVER_TEXT if victory is None else YOU_WON_TEXT if victory else YOU_LOST_TEXT
+        formatted_game_over_text = (
+            GAME_OVER_TEXT
+            if victory is None
+            else YOU_WON_TEXT
+            if victory
+            else YOU_LOST_TEXT
+        )
         formatted_game_over_text[-1] = formatted_game_over_text[-1].format(
             utils.prettify_key(quit_key)
         )
