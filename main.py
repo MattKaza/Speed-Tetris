@@ -1,6 +1,7 @@
-import app.app
-import curses
 import argparse
+import curses
+
+import app.app
 
 
 def main(stdscr, debug=False):

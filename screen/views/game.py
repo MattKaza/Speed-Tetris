@@ -1,7 +1,7 @@
 """
 This module defines the view of the main game, and is used by game.py
 """
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import player.player
 import screen.utils as utils

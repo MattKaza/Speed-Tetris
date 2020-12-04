@@ -1,11 +1,12 @@
 import asyncio
-import screen.views.game
-import player.player
-import player.exceptions
 import curses
 from typing import List, Optional, Union
-from mytyping import Keymap, StatsDict, ActionMap, CursesWindow
+
+import player.exceptions
+import player.player
+import screen.views.game
 from game.consts import *
+from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_consts import COUNTDOWN
 
 

@@ -1,7 +1,9 @@
+from typing import Optional, Tuple
+
+import numpy as np  # type: ignore
+
 from player.consts import *
 from player.exceptions import *
-from typing import Optional, Tuple
-import numpy as np  # type: ignore
 
 
 class Player:

@@ -3,9 +3,9 @@ Here are various views of app.py screens, all inheriting from AppScreenLazyClass
 """
 
 import screen.utils as utils
+from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
 from screen.views.app_consts import *
-from mytyping import CursesWindow, OptionMap, Keymap
 
 
 class AppScreenLazyClass(Screen):

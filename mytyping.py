@@ -1,5 +1,5 @@
-from typing import List, Dict, Callable, Tuple, Any
 import curses
+from typing import Any, Callable, Dict, List, Tuple
 
 Keymap = Dict[str, int]
 ActionMap = Dict[str, Callable[[], None]]

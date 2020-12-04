@@ -1,4 +1,4 @@
-from curses import KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BACKSPACE
+from curses import KEY_BACKSPACE, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP
 
 DEFAULT_OPTIONS_KEYMAP = {
     "select": ord("\n"),

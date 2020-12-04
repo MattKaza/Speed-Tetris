@@ -2,10 +2,10 @@
 This is a bunch of utils that are helpful for the graphics of the project
 """
 from curses import newwin
-from typing import Optional, List
+from typing import List, Optional
 
-from mytyping import CursesWindow
 import screen.consts as consts
+from mytyping import CursesWindow
 
 
 def _border_row(

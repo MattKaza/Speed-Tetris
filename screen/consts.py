@@ -1,4 +1,5 @@
-from curses import KEY_LEFT, KEY_BACKSPACE, KEY_ENTER, KEY_UP, KEY_DOWN, KEY_RIGHT
+from curses import (KEY_BACKSPACE, KEY_DOWN, KEY_ENTER, KEY_LEFT, KEY_RIGHT,
+                    KEY_UP)
 
 ROW_LOADING_TIMEOUT = 0.05
 BORDER = "┃"

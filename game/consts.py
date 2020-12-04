@@ -1,4 +1,4 @@
-from curses import KEY_LEFT, KEY_RIGHT, KEY_DOWN, KEY_UP
+from curses import KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP
 
 # IO stuff
 DEFAULT_KEYMAP = {

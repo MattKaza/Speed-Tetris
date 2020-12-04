@@ -1,13 +1,14 @@
-import sys
 import asyncio
-import player.exceptions
-import game.game
+import sys
+from typing import List
+
 import game.consts
+import game.game
+import player.exceptions
 import screen.views.app
 import utils
-from typing import List
-from mytyping import Keymap, OptionMap, ActionMap, CursesWindow
 from app.consts import *
+from mytyping import ActionMap, CursesWindow, Keymap, OptionMap
 
 
 class App:

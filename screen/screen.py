@@ -8,8 +8,8 @@ and implement the view logic in _generate_view
 import time
 from typing import Optional
 
-from mytyping import CursesWindow
 import screen.utils
+from mytyping import CursesWindow
 from screen.consts import *
 
 
