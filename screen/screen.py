@@ -17,6 +17,7 @@ class Screen:
     """
     This is the graphics handler for the game. This prints stuff, and is overridden by the different views
     """
+
     def __init__(self, stdscr: CursesWindow):
         self.stdscr = stdscr
         self.rows, self.cols = 0, 0
@@ -42,13 +43,13 @@ class Screen:
         self.retro_next_time = True
 
     def print_screen(
-            self,
-            center_screen: Optional[bool] = True,
-            retro_style: Optional[bool] = False,
-            wrap_screen: Optional[bool] = False,
-            wrapper_text: Optional[str] = "",
-            **kwargs
-            ):
+        self,
+        center_screen: Optional[bool] = True,
+        retro_style: Optional[bool] = False,
+        wrap_screen: Optional[bool] = False,
+        wrapper_text: Optional[str] = "",
+        **kwargs
+    ):
         """
         Updates the current screen
         :param center_screen: bool, Whether to center the printed screen or not
@@ -66,14 +67,14 @@ class Screen:
             for i in range(len(self.graphics)):
                 self.graphics[i] = self.graphics[i].center(
                     self.cols - 2 if wrap_screen else self.cols
-                    )
+                )
             self.graphics = screen.utils.center_rows(
                 self.graphics, self.rows - 2 if wrap_screen else self.rows
-                )
+            )
         if wrap_screen:
             self.graphics = screen.utils.border_wrapper(
                 self.graphics, self.cols, wrapper_text
-                )
+            )
         if retro_style or self.retro_next_time:
             self.stdscr.clear()
             for i in range(len(self.graphics)):

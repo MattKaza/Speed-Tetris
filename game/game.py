@@ -10,9 +10,12 @@ import player.exceptions
 import player.player
 import screen.views.game
 from game.consts import (
-    DEFAULT_KEYMAP, fall_speed_formula, COUNTDOWN_TIMEOUT,
-    GAME_OVER_TIMEOUT, NO_KEY,
-    )
+    DEFAULT_KEYMAP,
+    fall_speed_formula,
+    COUNTDOWN_TIMEOUT,
+    GAME_OVER_TIMEOUT,
+    NO_KEY,
+)
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_consts import COUNTDOWN
 
@@ -21,6 +24,7 @@ class GameLazyClass:
     """
     This is the GameLazyClass, in charge of implementing the logic of interactions with the player module
     """
+
     def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP):
         """
         Initialises and starts a main of one game_player, and prints everything
@@ -37,25 +41,25 @@ class GameLazyClass:
         self.stats = {
             "score": lambda game_player: game_player.score,
             "level": lambda game_player: int(game_player.level),
-            }  # type: StatsDict
+        }  # type: StatsDict
 
         self.action_map = {
-            "left"   : lambda: self.player.move_sideways(-1),
-            "right"  : lambda: self.player.move_sideways(1),
-            "down"   : lambda: self.player.cycle(),
-            "rotate" : lambda: self.player.rotate(),
-            "drop"   : lambda: self.player.cycle(hard_drop=True),
+            "left": lambda: self.player.move_sideways(-1),
+            "right": lambda: self.player.move_sideways(1),
+            "down": lambda: self.player.cycle(),
+            "rotate": lambda: self.player.rotate(),
+            "drop": lambda: self.player.cycle(hard_drop=True),
             "restart": lambda: self._end_game(should_restart=True),
-            "quit"   : lambda: self._end_game(should_restart=False),
-            "hold"   : lambda: self.player.hold(),
-            }  # type: ActionMap
+            "quit": lambda: self._end_game(should_restart=False),
+            "hold": lambda: self.player.hold(),
+        }  # type: ActionMap
 
         self.screen = screen.views.game.GameScreen(
             stdscr=self.win,
             game_player=self.player,
             keymap=self.keymap,
             stats_map=self.stats,
-            )  # type: screen.views.game.GameScreen
+        )  # type: screen.views.game.GameScreen
 
     def _fall_speed(self):
         # This is the tetris-approved formula
@@ -117,11 +121,12 @@ class LocalGame:
     This class implements a local game, with one or more players.
     The amount of players is defined by how many keymaps are given on init.
     """
+
     def __init__(
-            self,
-            stdscr: CursesWindow,
-            list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
-            ):
+        self,
+        stdscr: CursesWindow,
+        list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
+    ):
         """
         Create a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
@@ -141,10 +146,10 @@ class LocalGame:
                 GameLazyClass(
                     stdscr=screen.utils.get_partial_screen(
                         self.win, player_num, self.players_count
-                        ),
+                    ),
                     keymap=keymap,
-                    )
                 )
+            )
 
     async def start(self):
         """

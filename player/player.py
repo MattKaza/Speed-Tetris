@@ -6,19 +6,29 @@ from typing import Optional, Tuple
 import numpy as np  # type: ignore
 
 from player.consts import (
-    EMPTY_SHAPE, WIDTH, HEIGHT, LIVE, DEAD, EMPTY, SHAPES_DICT,
-    SPAWN, DEFAULT_CENTERPOINT, SCORE,
-    )
+    EMPTY_SHAPE,
+    WIDTH,
+    HEIGHT,
+    LIVE,
+    DEAD,
+    EMPTY,
+    SHAPES_DICT,
+    SPAWN,
+    DEFAULT_CENTERPOINT,
+    SCORE,
+)
 from player.exceptions import (
-    GameOverException, BlockOverlapException,
+    GameOverException,
+    BlockOverlapException,
     OutOfBoundsException,
-    )
+)
 
 
 class Player:
     """
     This is the player class, which implement the backbone of the tetris logic. Here all actual logic should be defined.
     """
+
     def __init__(self):
         self.score = 0
         self.level = 1.0
@@ -69,7 +79,7 @@ class Player:
                     self.board[x][y] = DEAD
 
     def _spawn_piece(self):
-        spawn_area = self.board[SPAWN[0][0]: SPAWN[0][1], SPAWN[1][0]: SPAWN[1][1]]
+        spawn_area = self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]]
 
         if DEAD in spawn_area:
             raise GameOverException(player=self)
@@ -81,7 +91,7 @@ class Player:
         spawn_area = piece_coord
         self.centerpoint = DEFAULT_CENTERPOINT
 
-        self.board[SPAWN[0][0]: SPAWN[0][1], SPAWN[1][0]: SPAWN[1][1]] = spawn_area
+        self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]] = spawn_area
 
     def cycle(self, hard_drop: Optional[bool] = False):
         """
@@ -108,10 +118,8 @@ class Player:
             pass
 
     def rotate(
-            self,
-            centerpoint: Optional[Tuple[int, int]] = None,
-            shift: Optional[int] = 0
-            ):
+        self, centerpoint: Optional[Tuple[int, int]] = None, shift: Optional[int] = 0
+    ):
         """
         Rotate a piece, according to the current position and the centerpoint.
         It implements some sort of wall kick, but not an SRS thing per se.
@@ -163,7 +171,7 @@ class Player:
             for j in range(len(self.board[i])):
                 self.board[i][j] = (
                     EMPTY if self.board[i][j] == LIVE else self.board[i][j]
-                    )
+                )
 
     def hold(self):
         """

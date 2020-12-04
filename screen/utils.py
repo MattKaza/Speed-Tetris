@@ -9,10 +9,8 @@ from mytyping import CursesWindow
 
 
 def _border_row(
-        top: Optional[bool] = False,
-        text: Optional[str] = "",
-        width: Optional[int] = 0
-        ):
+    top: Optional[bool] = False, text: Optional[str] = "", width: Optional[int] = 0
+):
     row = "┏" if top else "┗"
     if text:
         text = " " + text.upper() + " "
@@ -47,7 +45,7 @@ def prettify_key(key_code: int):
         consts.PRETTY_KEYS[key_code].upper()
         if key_code in consts.PRETTY_KEYS
         else chr(key_code).capitalize()
-        )
+    )
 
 
 def center_rows(list_of_rows: List[str], height: int):
@@ -64,7 +62,9 @@ def center_rows(list_of_rows: List[str], height: int):
     return list_of_rows
 
 
-def get_partial_screen(stdscr: CursesWindow, split_index_to_return: int, splits_counts: int):
+def get_partial_screen(
+    stdscr: CursesWindow, split_index_to_return: int, splits_counts: int
+):
     """
     Spits a stdscr vertically, and returns the screen at location split_index_to_return
     :param stdscr: the screen to split
@@ -76,10 +76,10 @@ def get_partial_screen(stdscr: CursesWindow, split_index_to_return: int, splits_
     rows_per_screen = total_rows
     cols_per_screen = int(
         total_cols / splits_counts
-        )  # int() is rounding by flooring so it's cool
+    )  # int() is rounding by flooring so it's cool
     return newwin(
         rows_per_screen,
         cols_per_screen,
         0,  # Y axis starting position
         cols_per_screen * split_index_to_return,  # X axis starting position
-        )
+    )

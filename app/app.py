@@ -19,6 +19,7 @@ class App:
     This is the App class, which handles the creation of game objects according to user preferences,
     as well as in charge of displaying all the option menus and the likes
     """
+
     def __init__(self, stdscr: CursesWindow, debug: bool = False):
         if not debug and not sys.warnoptions:
             import warnings
@@ -33,15 +34,15 @@ class App:
         self.player_two_keymap = game.consts.SECONDARY_KEYMAP  # type: Keymap
         self.options_keymap = DEFAULT_OPTIONS_KEYMAP  # type: Keymap
         self.action_map = {
-            "up"     : lambda: self._change_horizontal_index(-1),
-            "down"   : lambda: self._change_horizontal_index(1),
-            "right"  : lambda: self._change_vertical_index(1),
-            "left"   : lambda: self._change_vertical_index(-1),
-            "select" : lambda: self._select(),
+            "up": lambda: self._change_horizontal_index(-1),
+            "down": lambda: self._change_horizontal_index(1),
+            "right": lambda: self._change_vertical_index(1),
+            "left": lambda: self._change_vertical_index(-1),
+            "select": lambda: self._select(),
             "select2": lambda: self._select(),
-            "return" : lambda: self._return(),
-            "exit"   : lambda: exit(),
-            }  # type: ActionMap
+            "return": lambda: self._return(),
+            "exit": lambda: exit(),
+        }  # type: ActionMap
 
         self.main_menu_option = [
             ("Single Player", lambda: self.single_player()),
@@ -49,11 +50,11 @@ class App:
             ("Online Multiplayer", lambda: self.online_multiplayer()),
             ("Settings and Controls", lambda: self.init_settings()),
             ("Exit", lambda: exit()),
-            ]  # type: OptionMap
+        ]  # type: OptionMap
 
         self.views = [
             screen.views.app.MainAppScreen(self.stdscr, self.main_menu_option)
-            ]  # type: List[screen.views.app.AppScreenLazyClass]
+        ]  # type: List[screen.views.app.AppScreenLazyClass]
 
         self.option_maps = [self.main_menu_option]  # type: List[OptionMap]
         utils.initlog(LOG_FILE_PATH)
@@ -96,7 +97,7 @@ class App:
     def _generate_keymap_options(self, keymap: Keymap):
         return [
             (key, lambda: self._change_keymap(keymap=keymap)) for key in keymap.keys()
-            ]
+        ]
 
     def init_settings(self):
         """
@@ -106,12 +107,12 @@ class App:
         self.views.append(
             screen.views.app.SettingsAppScreen(
                 stdscr=self.stdscr, keymap=self.player_one_keymap
-                )
             )
+        )
         self.views[-1].retro_ok()
         self.option_maps.append(
             self._generate_keymap_options(keymap=self.player_one_keymap)
-            )
+        )
 
     def _run_local_game(self, list_of_keymaps: List[Keymap]):
         self.stdscr.clear()
@@ -140,7 +141,7 @@ class App:
         """
         self._run_local_game(
             list_of_keymaps=[self.player_two_keymap, self.player_one_keymap]
-            )
+        )
 
     def single_player(self):
         """

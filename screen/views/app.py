@@ -7,16 +7,21 @@ import screen.utils as utils
 from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
 from screen.views.app_consts import (
-    LOGO_GRAPHICS, ACTIVE_OPTION, EMPTY_OPTION,
-    LOGO_DISTANCE_FROM_TOP, OPTIONS_DISTANCE_FROM_BOTTOM, SETTINGS_OPTION_COLUMN_WIDTH,
+    LOGO_GRAPHICS,
+    ACTIVE_OPTION,
+    EMPTY_OPTION,
+    LOGO_DISTANCE_FROM_TOP,
+    OPTIONS_DISTANCE_FROM_BOTTOM,
+    SETTINGS_OPTION_COLUMN_WIDTH,
     SETTINGS_HEADER_DISTANCE_FROM_TOP,
-    )
+)
 
 
 class AppScreenLazyClass(Screen, ABC):
     """
     This is the base class of an app menu view
     """
+
     def __init__(self, stdscr: CursesWindow):
         super().__init__(stdscr)
         self.active_option = 0
@@ -37,8 +42,8 @@ class AppScreenLazyClass(Screen, ABC):
                 "{0} {1}".format(
                     ACTIVE_OPTION if i == self.active_option else EMPTY_OPTION,
                     self.options[i].upper(),
-                    )
                 )
+            )
             max_option_len = max(len(option_graphics[-1]), max_option_len)
 
         distance_from_top = self.rows - 2 - len(option_graphics) - distance_from_bottom
@@ -61,6 +66,7 @@ class MainAppScreen(AppScreenLazyClass):
     """
     This is the view of the main screen of the app module
     """
+
     def __init__(self, stdscr: CursesWindow, menu_options: OptionMap):
         super().__init__(stdscr=stdscr)
         self.options = [option_name for option_name, _ in menu_options]
@@ -74,6 +80,7 @@ class SettingsAppScreen(AppScreenLazyClass):
     """
     This is the view of the settings screen of the app module
     """
+
     def __init__(self, stdscr: CursesWindow, keymap: Keymap):
         super().__init__(stdscr=stdscr)
         self.keymap = keymap
@@ -85,7 +92,7 @@ class SettingsAppScreen(AppScreenLazyClass):
             key_list[i] += ": "
             key_list[i] += utils.prettify_key(self.keymap[key]).rjust(
                 SETTINGS_OPTION_COLUMN_WIDTH - len(key_list[i])
-                )
+            )
         return key_list
 
     def _generate_view(self):
