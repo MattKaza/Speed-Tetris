@@ -1,18 +1,20 @@
 TODO:
-* Rethink centerpoint placement for blocks
+* player/player - Rethink centerpoint placement for blocks
 * Refactor in general
-* Implement wall kicks according to the SRS algorithm
-* Nicer 'Game Over' graphics
-* Line clearing animation?
-* Retro background for app menu
-* Display keys for both players
-* Async run local multiplayer
-* Have a "NotImplementedError" screen for online multiplayer
-* Add logging and display error if scr to small for game
-* Create online multiplayer feature
+* player/player - Implement wall kicks according to the SRS algorithm
+* Views/game - Nicer 'Game Over' graphics
+* Views/app - Retro background for app menu
+* Views/app - Display keys for both players
+* Views/app - Have the restart and quit buttons as consts
+* Views/app - Make the multiplayer players amount changeable
+* Views/app - Have a display with info about current config when hovering on a an option
+* Views/app | app/app - Have a "NotImplementedError" screen for online multiplayer
+* Views/app | app/app - Add logging and display error if scr to small for game
+* server | app/app - Create online multiplayer feature
 
 
 DONE TASKS:
+* ~~Async run local multiplayer~~
 * ~~Refactor graphics code~~
 * ~~Create the settings menu~~
 * ~~Make keys mappable~~

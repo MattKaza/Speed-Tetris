@@ -1,15 +1,15 @@
-import curses
+from curses import KEY_LEFT, KEY_RIGHT, KEY_DOWN, KEY_UP
 
 # IO stuff
 DEFAULT_KEYMAP = {
-    "left": curses.KEY_LEFT,
-    "right": curses.KEY_RIGHT,
-    "down": curses.KEY_DOWN,
-    "rotate": curses.KEY_UP,
+    "left": KEY_LEFT,
+    "right": KEY_RIGHT,
+    "down": KEY_DOWN,
+    "rotate": KEY_UP,
     "drop": ord(" "),
+    "hold": ord("l"),
     "restart": ord("r"),
     "quit": ord("q"),
-    "hold": ord("l"),
 }
 SECONDARY_KEYMAP = {
     "left": ord("a"),
@@ -17,9 +17,9 @@ SECONDARY_KEYMAP = {
     "down": ord("s"),
     "rotate": ord("w"),
     "drop": ord("e"),
+    "hold": ord("`"),
     "restart": ord("r"),
     "quit": ord("q"),
-    "hold": ord("`"),
 }
 # Game consts
 NO_KEY = -1

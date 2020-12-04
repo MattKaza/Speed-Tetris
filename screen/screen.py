@@ -1,4 +1,5 @@
 import screen.utils
+# import utils
 from screen.consts import *
 import time
 
@@ -16,7 +17,7 @@ class Screen:
         self.graphics = []
 
     def _generate_view(self, **kwargs):
-        raise NotImplementedError("draw_screen needs to be implemented by the view")
+        raise NotImplementedError("_generate_view needs to be implemented by the view")
 
     def retro_ok(self):
         self.retro_next_time = True
@@ -39,6 +40,7 @@ class Screen:
         """
         if not wrap_screen and wrapper_text != "":
             raise AssertionError("Cannot provide a wrapper text if not wrapping!")
+
         self.init_graphics()
         self._generate_view(**kwargs)
         if center_screen:

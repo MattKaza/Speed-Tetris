@@ -57,7 +57,7 @@ class Player:
         spawn_area = self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]]
 
         if DEAD in spawn_area:
-            raise GameOverException
+            raise GameOverException(player=self)
 
         piece, self.next_pieces = self.next_pieces[-1], self.next_pieces[:-1]
         if len(self.next_pieces) == 0:

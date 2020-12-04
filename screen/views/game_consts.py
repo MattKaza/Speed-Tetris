@@ -31,6 +31,18 @@ GAME_OVER_TEXT = [
     "to restart",
     "Press {0} to quit",
 ]
+YOU_WON_TEXT = [
+    "You won !",
+    "Press any key",
+    "to restart",
+    "Press {0} to quit",
+]
+YOU_LOST_TEXT = [
+    "You lost :(",
+    "Press any key",
+    "to restart",
+    "Press {0} to quit",
+]
 
 COUNTDOWN = [
     [

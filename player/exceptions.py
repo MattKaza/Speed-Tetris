@@ -5,7 +5,9 @@ class EndGameException(Exception):
 
 
 class GameOverException(Exception):
-    pass
+    def __init__(self, player):
+        super()
+        self.player = player
 
 
 class OutOfBoundsException(Exception):
