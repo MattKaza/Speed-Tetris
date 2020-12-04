@@ -47,9 +47,7 @@ class App:
             screen.views.app.MainAppScreen(self.stdscr, self.main_menu_option)
         ]  # type: List[screen.views.app.AppScreenLazyClass]
 
-        self.option_maps = [
-            self.main_menu_option
-        ]  # type: List[OptionMap]
+        self.option_maps = [self.main_menu_option]  # type: List[OptionMap]
         utils.initlog(LOG_FILE_PATH)
 
     def _change_horizontal_index(self, diff: int):

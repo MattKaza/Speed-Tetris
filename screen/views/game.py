@@ -25,11 +25,11 @@ class GameScreen(Screen):
 
     @staticmethod
     def _draw_piece(
-            piece_coord: List[List[int]],
-            text: str,
-            x_size: Optional[int] = None,
-            y_size: Optional[int] = None,
-            centering_width: Optional[int] = None
+        piece_coord: List[List[int]],
+        text: str,
+        x_size: Optional[int] = None,
+        y_size: Optional[int] = None,
+        centering_width: Optional[int] = None,
     ):
         if not x_size:
             x_size = len(piece_coord)

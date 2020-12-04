@@ -85,7 +85,9 @@ class Player:
         except (IndexError, AssertionError):
             pass
 
-    def rotate(self, centerpoint: Optional[Tuple[int, int]] = None, shift: Optional[int] = 0):
+    def rotate(
+        self, centerpoint: Optional[Tuple[int, int]] = None, shift: Optional[int] = 0
+    ):
         if centerpoint is None:
             centerpoint = self.centerpoint
         try:

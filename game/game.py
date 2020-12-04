@@ -88,7 +88,11 @@ class GameLazyClass:
 
 
 class LocalGame:
-    def __init__(self, stdscr: CursesWindow, list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP):
+    def __init__(
+        self,
+        stdscr: CursesWindow,
+        list_of_keymaps: Union[Keymap, List[Keymap]] = DEFAULT_KEYMAP,
+    ):
         """
         Creates a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
@@ -106,7 +110,10 @@ class LocalGame:
         for player_num, keymap in enumerate(self.list_of_keymaps):
             self.game_lazy_classes.append(
                 GameLazyClass(
-                    stdscr=screen.utils.get_partial_screen(self.win, player_num, self.players_count), keymap=keymap
+                    stdscr=screen.utils.get_partial_screen(
+                        self.win, player_num, self.players_count
+                    ),
+                    keymap=keymap,
                 )
             )
 

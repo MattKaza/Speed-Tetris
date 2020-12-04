@@ -8,7 +8,9 @@ from mytyping import CursesWindow
 import screen.consts as consts
 
 
-def _border_row(top: Optional[bool] = False, text: Optional[str] = "", width: Optional[int] = 0):
+def _border_row(
+    top: Optional[bool] = False, text: Optional[str] = "", width: Optional[int] = 0
+):
     row = "┏" if top else "┗"
     if text:
         text = " " + text.upper() + " "
