@@ -121,7 +121,7 @@ class LocalGame:
         """
         Create a local game, with the players amount being the length of list_of_keymaps
         :param stdscr: The whole stdscr you want to capture keystrokes on
-        :param list_of_keymaps: a list of keymap-type dictionaries
+        :param list_of_keymaps: a list of list_of_keymaps-type dictionaries
         """
 
         if not isinstance(list_of_keymaps, list):

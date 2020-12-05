@@ -10,7 +10,7 @@ import game.game_consts
 import player.exceptions
 import screen.views.app_views
 import utils
-from app.app_consts import DEFAULT_OPTIONS_KEYMAP, LOG_FILE_PATH
+from app.app_consts import DEFAULT_OPTIONS_KEYMAP, LOG_FILE_PATH, PLAYER_NUM_OPTION
 from mytyping import ActionMap, CursesWindow, Keymap, OptionMap
 
 
@@ -30,14 +30,14 @@ class App:
         self.horizontal_option_index = 0
         self.vertical_option_index = 0
 
-        self.player_one_keymap = game.game_consts.DEFAULT_KEYMAP  # type: Keymap
-        self.player_two_keymap = game.game_consts.SECONDARY_KEYMAP  # type: Keymap
+        self.players_num = 2  # type: int
+        self.list_of_keymaps = [game.game_consts.DEFAULT_KEYMAP, game.game_consts.SECONDARY_KEYMAP]  # type: List[Keymap]
         self.options_keymap = DEFAULT_OPTIONS_KEYMAP  # type: Keymap
         self.action_map = {
-            "up": lambda: self._change_horizontal_index(-1),
-            "down": lambda: self._change_horizontal_index(1),
-            "right": lambda: self._change_vertical_index(1),
-            "left": lambda: self._change_vertical_index(-1),
+            "up": lambda: self._change_option_index(x_diff=-1, y_diff=0),
+            "down": lambda: self._change_option_index(x_diff=1, y_diff=0),
+            "right": lambda: self._change_option_index(x_diff=0, y_diff=1),
+            "left": lambda: self._change_option_index(x_diff=0, y_diff=-1),
             "select": lambda: self._select(),
             "select2": lambda: self._select(),
             "return": lambda: self._return(),
@@ -45,11 +45,11 @@ class App:
         }  # type: ActionMap
 
         self.main_menu_option = [
-            ("Single Player", lambda: self.single_player()),
-            ("Local Multiplayer", lambda: self.local_multiplayer()),
-            ("Online Multiplayer", lambda: self.online_multiplayer()),
-            ("Settings and Controls", lambda: self.init_settings()),
-            ("Exit", lambda: exit()),
+            [("Single Player", None, lambda: self.single_player())],
+            [("Local Multiplayer", None, lambda: self.local_multiplayer())],
+            [("Online Multiplayer", None, lambda: self.online_multiplayer())],
+            [("Settings and Controls", None, lambda: self.init_settings())],
+            [("Exit", None, lambda: exit())],
         ]  # type: OptionMap
 
         self.views = [
@@ -59,24 +59,28 @@ class App:
         self.option_maps = [self.main_menu_option]  # type: List[OptionMap]
         utils.initlog(LOG_FILE_PATH)
 
-    def _change_horizontal_index(self, diff: int):
-        self.horizontal_option_index += diff
+    def _change_option_index(self, x_diff: int, y_diff: int):
+        self.horizontal_option_index += x_diff
         self.horizontal_option_index %= len(self.option_maps[-1])
-        self.views[-1].set_active_option(self.horizontal_option_index)
+        self.vertical_option_index += y_diff
+        self.vertical_option_index %= len(self.option_maps[-1][self.horizontal_option_index])
+        self.views[-1].set_active_option(x=self.horizontal_option_index, y=self.vertical_option_index)
 
-    def _change_vertical_index(self, diff: int):
-        self.vertical_option_index += diff
-        # TODO
+        # Special case where I want to be able to change the players num without hitting enter.
+        if y_diff != 0:
+            if self.option_maps[-1][self.horizontal_option_index][self.vertical_option_index][0] == PLAYER_NUM_OPTION:
+                self.players_num += y_diff
+                self.players_num = 1 if self.players_num < 1 else self.players_num
 
     def _select(self):
-        _, active_option_lambda = self.option_maps[-1][self.horizontal_option_index]
+        _, _, active_option_lambda = self.option_maps[-1][self.horizontal_option_index]
         active_option_lambda()
 
     def _return(self):
         if len(self.views) > 1:
             self.views.pop()
             self.option_maps.pop()
-            self._change_horizontal_index(diff=-self.horizontal_option_index)
+            self._change_option_index(x_diff=-self.horizontal_option_index, y_diff=0)
             self.views[-1].retro_ok()
 
     def act_on_key_press(self):
@@ -91,12 +95,12 @@ class App:
 
     def _change_keymap(self, keymap: Keymap):
         key = self.stdscr.getch()
-        option_name, _ = self.option_maps[-1][self.horizontal_option_index]
+        option_name, _, _ = self.option_maps[-1][self.horizontal_option_index]
         keymap[option_name] = key
 
     def _generate_keymap_options(self, keymap: Keymap):
         return [
-            (key, lambda: self._change_keymap(keymap=keymap)) for key in keymap.keys()
+            (key, value, lambda: self._change_keymap(keymap=keymap)) for key, value in keymap.items()
         ]
 
     def init_settings(self):
@@ -106,13 +110,14 @@ class App:
         self.horizontal_option_index = 0
         self.views.append(
             screen.views.app_views.SettingsAppScreen(
-                stdscr=self.stdscr, keymap=self.player_one_keymap
+                stdscr=self.stdscr, list_of_keymaps=self.list_of_keymaps
             )
         )
         self.views[-1].retro_ok()
-        self.option_maps.append(
-            self._generate_keymap_options(keymap=self.player_one_keymap)
-        )
+        settings_option_map = [[(PLAYER_NUM_OPTION, str(self.players_num), lambda: None)]]  # type: OptionMap 
+        list_of_keymap_options = [self._generate_keymap_options(keymap=keymap) for keymap in self.list_of_keymaps]  # type: OptionMap
+        settings_option_map += [list(keymap_options) for keymap_options in zip(*list_of_keymap_options)]
+        self.option_maps.append(settings_option_map)
 
     def _run_local_game(self, list_of_keymaps: List[Keymap]):
         self.stdscr.clear()
@@ -139,15 +144,13 @@ class App:
         """
         This func is called when the user chooses the local multiplayer option
         """
-        self._run_local_game(
-            list_of_keymaps=[self.player_two_keymap, self.player_one_keymap]
-        )
+        self._run_local_game(list_of_keymaps=self.list_of_keymaps[:self.players_num])
 
     def single_player(self):
         """
         This func is called when the user chooses the single player option
         """
-        self._run_local_game(list_of_keymaps=[self.player_one_keymap])
+        self._run_local_game(list_of_keymaps=self.list_of_keymaps[:1])
 
     def main(self):
         """

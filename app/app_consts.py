@@ -15,3 +15,4 @@ DEFAULT_OPTIONS_KEYMAP = {
 }
 
 LOG_FILE_PATH = r"./app.log"
+PLAYER_NUM_OPTION = "Number of players in a multiplayer session"
