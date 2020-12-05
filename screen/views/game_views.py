@@ -7,15 +7,23 @@ import player.player
 from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
 from screen.screen_utils import border_wrapper, prettify_key
-from screen.views.game_views_consts import (BOARD_BORDER_TEXT, BORDER,
-                                            DISPLAYED_HEIGHT, EMPTY,
-                                            EMPTY_PIXEL, FULL_PIXEL,
-                                            GAME_OVER_TEXT, HELP_BORDER_TEXT,
-                                            HOLD_BORDER_TEXT, NEXT_BORDER_TEXT,
-                                            PIXEL_SIZE,
-                                            RIGHT_SIDE_GRAPHICS_WIDTH,
-                                            STATS_BORDER_TEXT, YOU_LOST_TEXT,
-                                            YOU_WON_TEXT)
+from screen.views.game_views_consts import (
+    BOARD_BORDER_TEXT,
+    BORDER,
+    DISPLAYED_HEIGHT,
+    EMPTY,
+    EMPTY_PIXEL,
+    FULL_PIXEL,
+    GAME_OVER_TEXT,
+    HELP_BORDER_TEXT,
+    HOLD_BORDER_TEXT,
+    NEXT_BORDER_TEXT,
+    PIXEL_SIZE,
+    RIGHT_SIDE_GRAPHICS_WIDTH,
+    STATS_BORDER_TEXT,
+    YOU_LOST_TEXT,
+    YOU_WON_TEXT,
+)
 
 
 class GameScreen(Screen):

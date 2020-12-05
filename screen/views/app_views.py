@@ -2,18 +2,21 @@
 Here are various views of app_views.py screens, all inheriting from AppScreenLazyClass
 """
 from abc import ABC
-
 from typing import List
 
 from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
 from screen.screen_utils import prettify_key
-from screen.views.app_views_consts import (ACTIVE_OPTION, EMPTY_OPTION,
-                                           LOGO_DISTANCE_FROM_TOP,
-                                           LOGO_GRAPHICS,
-                                           OPTIONS_DISTANCE_FROM_BOTTOM,
-                                           SETTINGS_HEADER_DISTANCE_FROM_TOP,
-                                           SETTINGS_OPTION_COLUMN_WIDTH, SETTINGS_LOGO_GRAPHICS)
+from screen.views.app_views_consts import (
+    ACTIVE_OPTION,
+    EMPTY_OPTION,
+    LOGO_DISTANCE_FROM_TOP,
+    LOGO_GRAPHICS,
+    OPTIONS_DISTANCE_FROM_BOTTOM,
+    SETTINGS_HEADER_DISTANCE_FROM_TOP,
+    SETTINGS_LOGO_GRAPHICS,
+    SETTINGS_OPTION_COLUMN_WIDTH,
+)
 
 
 class AppScreenLazyClass(Screen, ABC):
@@ -42,13 +45,20 @@ class AppScreenLazyClass(Screen, ABC):
                 option_name, option_value, _ = option
                 if option_value is not None:
                     option_name += ": "
-                    str_raw_value = prettify_key(option_value) if isinstance(option_value, int) else str(option_value)
-                    option_name += str_raw_value.rjust(SETTINGS_OPTION_COLUMN_WIDTH - len(option_name))
-                option_row_graphics += \
-                    "  {0} {1}  ".format(
-                        ACTIVE_OPTION if (i == self.active_option_row and j == self.active_option_col) else EMPTY_OPTION,
-                        option_name.upper(),
+                    str_raw_value = (
+                        prettify_key(option_value)
+                        if isinstance(option_value, int)
+                        else str(option_value)
                     )
+                    option_name += str_raw_value.rjust(
+                        SETTINGS_OPTION_COLUMN_WIDTH - len(option_name)
+                    )
+                option_row_graphics += "  {0} {1}  ".format(
+                    ACTIVE_OPTION
+                    if (i == self.active_option_row and j == self.active_option_col)
+                    else EMPTY_OPTION,
+                    option_name.upper(),
+                )
                 option_row_graphics.center(self.cols - 2)
             option_graphics.append(option_row_graphics)
 
@@ -68,6 +78,7 @@ class AppScreenLazyClass(Screen, ABC):
         """
         self.active_option_row = x
         self.active_option_col = y
+
     #
     # def set_menu_options(self, menu_options: OptionMap):
     #     """
@@ -96,13 +107,21 @@ class MainAppScreen(AppScreenLazyClass):
         for i in range(len(option_map)):
             for j in range(len(option_map[i])):
                 option_name, option_value, option_lambda = option_map[i][j]
-                option_map[i][j] = (option_name.ljust(longest_option), option_value, option_lambda)
+                option_map[i][j] = (
+                    option_name.ljust(longest_option),
+                    option_value,
+                    option_lambda,
+                )
         return option_map
 
     def _generate_view(self, option_map: OptionMap):
         option_map = self._ljust_options(option_map)
-        self._print_logo(logo_graphics=LOGO_GRAPHICS, distance_from_top=LOGO_DISTANCE_FROM_TOP)
-        self._print_options(options=option_map, distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM)
+        self._print_logo(
+            logo_graphics=LOGO_GRAPHICS, distance_from_top=LOGO_DISTANCE_FROM_TOP
+        )
+        self._print_options(
+            options=option_map, distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM
+        )
 
 
 class SettingsAppScreen(AppScreenLazyClass):
@@ -126,11 +145,13 @@ class SettingsAppScreen(AppScreenLazyClass):
 
     def _generate_view(self, option_map: OptionMap):
 
-        self._print_logo(logo_graphics=SETTINGS_LOGO_GRAPHICS, distance_from_top=LOGO_DISTANCE_FROM_TOP)
+        self._print_logo(
+            logo_graphics=SETTINGS_LOGO_GRAPHICS,
+            distance_from_top=LOGO_DISTANCE_FROM_TOP,
+        )
         while len(self.graphics) <= SETTINGS_HEADER_DISTANCE_FROM_TOP:
             self.graphics.append("")
         self._print_options(
             options=option_map,
             distance_from_bottom=OPTIONS_DISTANCE_FROM_BOTTOM,
         )
-

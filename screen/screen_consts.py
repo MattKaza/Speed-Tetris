@@ -1,9 +1,30 @@
 """
 Here are consts relating to the general operation of graphics, as in the screen module
 """
-from curses import (KEY_BACKSPACE, KEY_DOWN, KEY_ENTER, KEY_LEFT, KEY_RIGHT, KEY_HOME, KEY_END, KEY_DC, KEY_IC,
-                    KEY_UP, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F12,
-                    KEY_NPAGE, KEY_PPAGE)
+from curses import (
+    KEY_BACKSPACE,
+    KEY_DC,
+    KEY_DOWN,
+    KEY_END,
+    KEY_F1,
+    KEY_F2,
+    KEY_F3,
+    KEY_F4,
+    KEY_F5,
+    KEY_F6,
+    KEY_F7,
+    KEY_F8,
+    KEY_F9,
+    KEY_F10,
+    KEY_F12,
+    KEY_HOME,
+    KEY_IC,
+    KEY_LEFT,
+    KEY_NPAGE,
+    KEY_PPAGE,
+    KEY_RIGHT,
+    KEY_UP,
+)
 
 ROW_LOADING_TIMEOUT = 0.05
 BORDER = "┃"
@@ -33,6 +54,5 @@ PRETTY_KEYS = {
     KEY_NPAGE: "PgUp",
     KEY_PPAGE: "PgDown",
     27: "esc",
-    9: "tab"
-
+    9: "tab",
 }

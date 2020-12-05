@@ -9,9 +9,21 @@ from typing import List, Optional, Union
 import player.exceptions
 import player.player
 import screen.views.game_views
-from game.game_consts import (COUNTDOWN_TIMEOUT, DEFAULT_KEYMAP,
-                              GAME_OVER_TIMEOUT, NO_KEY, fall_speed_formula,
-                              LEFT, RIGHT, DOWN, ROTATE, DROP, HOLD, RESTART, QUIT)
+from game.game_consts import (
+    COUNTDOWN_TIMEOUT,
+    DEFAULT_KEYMAP,
+    DOWN,
+    DROP,
+    GAME_OVER_TIMEOUT,
+    HOLD,
+    LEFT,
+    NO_KEY,
+    QUIT,
+    RESTART,
+    RIGHT,
+    ROTATE,
+    fall_speed_formula,
+)
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_views_consts import COUNTDOWN
 

@@ -2,9 +2,9 @@
 This module is the app, which is what handles menus and game options and the likes
 """
 import asyncio
+import random
 import sys
 from copy import deepcopy
-import random
 from typing import List
 
 import game.game
@@ -12,7 +12,12 @@ import game.game_consts
 import player.exceptions
 import screen.views.app_views
 import utils
-from app.app_consts import DEFAULT_MENUS_KEYMAP, LOG_FILE_PATH, PLAYER_NUM_OPTION, MAX_KEY_ALLOC_ATTEMPTS
+from app.app_consts import (
+    DEFAULT_MENUS_KEYMAP,
+    LOG_FILE_PATH,
+    MAX_KEY_ALLOC_ATTEMPTS,
+    PLAYER_NUM_OPTION,
+)
 from mytyping import ActionMap, CursesWindow, Keymap, OptionMap, OptionMapGenerator
 
 
@@ -20,6 +25,7 @@ class CannotAllocateKeymap(Exception):
     """
     This is raised when a keymap cannot be allocated
     """
+
     pass
 
 
@@ -42,7 +48,7 @@ class App:
         self.players_num = 2  # type: int
         self.list_of_keymaps = [
             game.game_consts.DEFAULT_KEYMAP,
-            game.game_consts.SECONDARY_KEYMAP
+            game.game_consts.SECONDARY_KEYMAP,
         ]  # type: List[Keymap]
         self.options_keymap = DEFAULT_MENUS_KEYMAP  # type: Keymap
         self.action_map = {
@@ -64,7 +70,9 @@ class App:
             [("Exit", None, lambda: exit())],
         ]  # type: OptionMap
 
-        self.option_map_generators = [self.main_option_map_generator]  # type: List[OptionMapGenerator]
+        self.option_map_generators = [
+            self.main_option_map_generator
+        ]  # type: List[OptionMapGenerator]
         self.views = [
             screen.views.app_views.MainAppScreen(self.stdscr)
         ]  # type: List[screen.views.app_views.AppScreenLazyClass]
@@ -85,16 +93,27 @@ class App:
         self.horizontal_option_index += x_diff
         self.horizontal_option_index %= len(self.option_map_generators[-1]())
         self.vertical_option_index += y_diff
-        self.vertical_option_index %= len(self.option_map_generators[-1]()[self.horizontal_option_index])
-        self.views[-1].set_active_option(x=self.horizontal_option_index, y=self.vertical_option_index)
+        self.vertical_option_index %= len(
+            self.option_map_generators[-1]()[self.horizontal_option_index]
+        )
+        self.views[-1].set_active_option(
+            x=self.horizontal_option_index, y=self.vertical_option_index
+        )
 
         # Special case where I want to be able to change the players num without hitting enter.
         if y_diff != 0:
-            if self.option_map_generators[-1]()[self.horizontal_option_index][self.vertical_option_index][0] == PLAYER_NUM_OPTION:
+            if (
+                self.option_map_generators[-1]()[self.horizontal_option_index][
+                    self.vertical_option_index
+                ][0]
+                == PLAYER_NUM_OPTION
+            ):
                 self._change_players_num(y_diff)
 
     def _select(self):
-        _, _, active_option_lambda = self.option_map_generators[-1]()[self.horizontal_option_index][self.vertical_option_index]
+        _, _, active_option_lambda = self.option_map_generators[-1]()[
+            self.horizontal_option_index
+        ][self.vertical_option_index]
         active_option_lambda()
 
     def _return(self):
@@ -114,16 +133,21 @@ class App:
         for item in self.options_keymap:
             if key == self.options_keymap[item]:
                 self.action_map[item]()
-                self.views[-1].print_screen(wrap_screen=True, option_map=self.option_map_generators[-1]())
+                self.views[-1].print_screen(
+                    wrap_screen=True, option_map=self.option_map_generators[-1]()
+                )
 
     def _change_keymap(self, keymap: Keymap):
         key = self.stdscr.getch()
-        option_name, _, _ = self.option_map_generators[-1]()[self.horizontal_option_index][self.vertical_option_index]
+        option_name, _, _ = self.option_map_generators[-1]()[
+            self.horizontal_option_index
+        ][self.vertical_option_index]
         keymap[option_name] = key
 
     def _generate_keymap_options(self, keymap: Keymap):
         return [
-            (key, value, lambda: self._change_keymap(keymap=keymap)) for key, value in keymap.items()
+            (key, value, lambda: self._change_keymap(keymap=keymap))
+            for key, value in keymap.items()
         ]
 
     def random_keymap_generator(self):
@@ -169,10 +193,16 @@ class App:
         """
         The option map generator of the settings menu
         """
-        settings_option_map = [[(PLAYER_NUM_OPTION, str(self.players_num), lambda: None)]]  # type: OptionMap
-        list_of_keymap_options = [self._generate_keymap_options(keymap=keymap) for keymap in
-                                  self.list_of_keymaps[:self.players_num]]  # type: OptionMap
-        settings_option_map += [list(keymap_options) for keymap_options in zip(*list_of_keymap_options)]
+        settings_option_map = [
+            [(PLAYER_NUM_OPTION, str(self.players_num), lambda: None)]
+        ]  # type: OptionMap
+        list_of_keymap_options = [
+            self._generate_keymap_options(keymap=keymap)
+            for keymap in self.list_of_keymaps[: self.players_num]
+        ]  # type: OptionMap
+        settings_option_map += [
+            list(keymap_options) for keymap_options in zip(*list_of_keymap_options)
+        ]
         return settings_option_map
 
     def init_settings(self):
@@ -181,9 +211,7 @@ class App:
         """
         self.horizontal_option_index = 0
         self.option_map_generators.append(self.settings_option_map_generator)
-        self.views.append(
-            screen.views.app_views.SettingsAppScreen(stdscr=self.stdscr)
-        )
+        self.views.append(screen.views.app_views.SettingsAppScreen(stdscr=self.stdscr))
         self.views[-1].retro_ok()
 
     def _run_local_game(self, list_of_keymaps: List[Keymap]):
@@ -211,7 +239,7 @@ class App:
         """
         This func is called when the user chooses the local multiplayer option
         """
-        self._run_local_game(list_of_keymaps=self.list_of_keymaps[:self.players_num])
+        self._run_local_game(list_of_keymaps=self.list_of_keymaps[: self.players_num])
 
     def single_player(self):
         """
@@ -223,6 +251,10 @@ class App:
         """
         This is the main "event loop" of the app. It initializes the menu and then acts according to key presses
         """
-        self.views[-1].print_screen(wrap_screen=True, retro_style=True, option_map=self.option_map_generators[-1]())
+        self.views[-1].print_screen(
+            wrap_screen=True,
+            retro_style=True,
+            option_map=self.option_map_generators[-1](),
+        )
         while True:
             self.act_on_key_press()
