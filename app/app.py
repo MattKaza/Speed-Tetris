@@ -5,12 +5,12 @@ import asyncio
 import sys
 from typing import List
 
-import game.consts
+import game.game_consts
 import game.game
 import player.exceptions
-import screen.views.app
+import screen.views.app_views
 import utils
-from app.consts import DEFAULT_OPTIONS_KEYMAP, LOG_FILE_PATH
+from app.app_consts import DEFAULT_OPTIONS_KEYMAP, LOG_FILE_PATH
 from mytyping import ActionMap, CursesWindow, Keymap, OptionMap
 
 
@@ -30,8 +30,8 @@ class App:
         self.horizontal_option_index = 0
         self.vertical_option_index = 0
 
-        self.player_one_keymap = game.consts.DEFAULT_KEYMAP  # type: Keymap
-        self.player_two_keymap = game.consts.SECONDARY_KEYMAP  # type: Keymap
+        self.player_one_keymap = game.game_consts.DEFAULT_KEYMAP  # type: Keymap
+        self.player_two_keymap = game.game_consts.SECONDARY_KEYMAP  # type: Keymap
         self.options_keymap = DEFAULT_OPTIONS_KEYMAP  # type: Keymap
         self.action_map = {
             "up": lambda: self._change_horizontal_index(-1),
@@ -53,8 +53,8 @@ class App:
         ]  # type: OptionMap
 
         self.views = [
-            screen.views.app.MainAppScreen(self.stdscr, self.main_menu_option)
-        ]  # type: List[screen.views.app.AppScreenLazyClass]
+            screen.views.app_views.MainAppScreen(self.stdscr, self.main_menu_option)
+        ]  # type: List[screen.views.app_views.AppScreenLazyClass]
 
         self.option_maps = [self.main_menu_option]  # type: List[OptionMap]
         utils.initlog(LOG_FILE_PATH)
@@ -105,7 +105,7 @@ class App:
         """
         self.horizontal_option_index = 0
         self.views.append(
-            screen.views.app.SettingsAppScreen(
+            screen.views.app_views.SettingsAppScreen(
                 stdscr=self.stdscr, keymap=self.player_one_keymap
             )
         )
@@ -123,8 +123,8 @@ class App:
             try:
                 utils.log.info("Running game")
                 asyncio.run(g.start())
-            except player.exceptions.GameOverException:
-                asyncio.run(g.game_over())
+            except player.exceptions.GameOverException as e:
+                asyncio.run(g.game_over(player_id=e.player_id))
         except player.exceptions.EndGameException as e:
             if e.should_restart:
                 self._run_local_game(list_of_keymaps)

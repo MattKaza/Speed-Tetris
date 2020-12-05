@@ -4,7 +4,7 @@ Here are various utility functions useful for the graphics of the project
 from curses import newwin
 from typing import List, Optional
 
-import screen.consts as consts
+import screen.screen_consts as consts
 from mytyping import CursesWindow
 
 

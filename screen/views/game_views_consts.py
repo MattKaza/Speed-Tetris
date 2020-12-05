@@ -1,12 +1,12 @@
 """
 Here are graphical consts related to views of the game module
 """
-import player.consts
+import player.player_consts
 
 # Pixel indices
-EMPTY = player.consts.EMPTY
-LIVE = player.consts.LIVE
-DEAD = player.consts.DEAD
+EMPTY = player.player_consts.EMPTY
+LIVE = player.player_consts.LIVE
+DEAD = player.player_consts.DEAD
 
 # Board indices
 DISPLAYED_HEIGHT = 20
@@ -34,19 +34,19 @@ GAME_OVER_TEXT = [
     "G A M E   O V E R",
     "Press any key",
     "to restart",
-    "Press {0} to quit",
+    "Press {quit} to quit",
 ]
 YOU_WON_TEXT = [
     "You won !",
     "Press any key",
     "to restart",
-    "Press {0} to quit",
+    "Press {quit} to quit",
 ]
 YOU_LOST_TEXT = [
     "You lost :(",
     "Press any key",
     "to restart",
-    "Press {0} to quit",
+    "Press {quit} to quit",
 ]
 
 COUNTDOWN = [

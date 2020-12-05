@@ -8,8 +8,8 @@ from typing import List, Optional, Union
 
 import player.exceptions
 import player.player
-import screen.views.game
-from game.consts import (
+import screen.views.game_views
+from game.game_consts import (
     DEFAULT_KEYMAP,
     fall_speed_formula,
     COUNTDOWN_TIMEOUT,
@@ -17,7 +17,7 @@ from game.consts import (
     NO_KEY,
 )
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
-from screen.views.game_consts import COUNTDOWN
+from screen.views.game_views_consts import COUNTDOWN
 
 
 class GameLazyClass:
@@ -25,7 +25,7 @@ class GameLazyClass:
     This is the GameLazyClass, in charge of implementing the logic of interactions with the player module
     """
 
-    def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP):
+    def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP, player_id: int = 0):
         """
         Initialises and starts a main of one game_player, and prints everything
         :param stdscr: The curses window object of the main
@@ -36,7 +36,8 @@ class GameLazyClass:
         self.win = stdscr
         self.known_level = 1
         self.fall_speed = self._fall_speed()
-        self.player = player.player.Player()
+        self.player_id = player_id
+        self.player = player.player.Player(self.player_id)
         self.keymap = keymap
         self.stats = {
             "score": lambda game_player: game_player.score,
@@ -54,19 +55,19 @@ class GameLazyClass:
             "hold": lambda: self.player.hold(),
         }  # type: ActionMap
 
-        self.screen = screen.views.game.GameScreen(
+        self.screen = screen.views.game_views.GameScreen(
             stdscr=self.win,
             game_player=self.player,
             keymap=self.keymap,
             stats_map=self.stats,
-        )  # type: screen.views.game.GameScreen
+        )  # type: screen.views.game_views.GameScreen
 
     def _fall_speed(self):
         # This is the tetris-approved formula
         return fall_speed_formula(level=self.known_level)
 
     def _end_game(self, should_restart: Optional[bool] = True):
-        raise player.exceptions.EndGameException(should_restart=should_restart)
+        raise player.exceptions.EndGameException(player_id=self.player_id, should_restart=should_restart)
 
     def level_up_check(self):
         """
@@ -105,15 +106,6 @@ class GameLazyClass:
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
         """
         self.screen.game_over(victory=victory, quit_key=self.keymap["quit"])
-        await asyncio.sleep(GAME_OVER_TIMEOUT)
-        while True:
-            key = self.win.getch()
-            if key == NO_KEY:
-                continue
-            elif key == self.keymap["quit"]:
-                self.action_map["quit"]()
-            else:
-                self.action_map["restart"]()
 
 
 class LocalGame:
@@ -139,15 +131,17 @@ class LocalGame:
         self.win = stdscr
         self.list_of_keymaps = list_of_keymaps  # type: List[Keymap]
         self.players_count = len(self.list_of_keymaps)
+        self.already_finished_players = []
 
         self.game_lazy_classes = []  # type: List[GameLazyClass]
-        for player_num, keymap in enumerate(self.list_of_keymaps):
+        for player_id, keymap in enumerate(self.list_of_keymaps):
             self.game_lazy_classes.append(
                 GameLazyClass(
-                    stdscr=screen.utils.get_partial_screen(
-                        self.win, player_num, self.players_count
+                    stdscr=screen.screen_utils.get_partial_screen(
+                        self.win, player_id, self.players_count
                     ),
                     keymap=keymap,
+                    player_id=player_id,
                 )
             )
 
@@ -184,11 +178,38 @@ class LocalGame:
                         self.game_lazy_classes[player_num].action_map[item]()
                         self.game_lazy_classes[player_num].screen.print_screen()
 
-    async def game_over(self):
+    async def game_over_key_hook(self):
+        """
+        This function is the special key hook logic for the game over screen.
+        It waits for a bit before sampling keys, and then quits on a quit key, and restarts on any other key
+        """
+        await asyncio.sleep(GAME_OVER_TIMEOUT)
+        while True:
+            await asyncio.sleep(0)
+            key = self.win.getch()
+            if key == NO_KEY:
+                continue
+            for player_num, keymap in enumerate(self.list_of_keymaps):
+                if key == keymap["quit"]:
+                    self.game_lazy_classes[player_num].action_map["quit"]()
+            else:
+                for player_num in range(self.players_count):
+                    self.game_lazy_classes[player_num].action_map["restart"]()
+
+    async def game_over(self, player_id):
         """
         This is called on game over, to init the game over logic on all the GameLazyClasses
         """
-        funcs_to_run = []
-        for game_lazy_class in self.game_lazy_classes:
-            funcs_to_run.append(game_lazy_class.game_over())
+        funcs_to_run = [self.game_over_key_hook()]
+        if self.players_count == 1:
+            for game_lazy_class in self.game_lazy_classes:
+                funcs_to_run.append(game_lazy_class.game_over(victory=None))
+        else:
+            funcs_to_run.append(self.game_lazy_classes[player_id].game_over(victory=False))
+            self.already_finished_players.append(self.game_lazy_classes[player_id])
+            if self.players_count - len(self.already_finished_players) == 1:
+                for game_lazy_class in self.game_lazy_classes:
+                    if game_lazy_class not in self.already_finished_players:
+                        funcs_to_run.append(game_lazy_class.game_over(victory=True))
+
         await asyncio.gather(*funcs_to_run)

@@ -8,9 +8,9 @@ and implement the view logic in _generate_view
 import time
 from typing import Optional
 
-import screen.utils
+import screen.screen_utils
 from mytyping import CursesWindow
-from screen.consts import ROW_LOADING_TIMEOUT
+from screen.screen_consts import ROW_LOADING_TIMEOUT
 
 
 class Screen:
@@ -68,11 +68,11 @@ class Screen:
                 self.graphics[i] = self.graphics[i].center(
                     self.cols - 2 if wrap_screen else self.cols
                 )
-            self.graphics = screen.utils.center_rows(
+            self.graphics = screen.screen_utils.center_rows(
                 self.graphics, self.rows - 2 if wrap_screen else self.rows
             )
         if wrap_screen:
-            self.graphics = screen.utils.border_wrapper(
+            self.graphics = screen.screen_utils.border_wrapper(
                 self.graphics, self.cols, wrapper_text
             )
         if retro_style or self.retro_next_time:

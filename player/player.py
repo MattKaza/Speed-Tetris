@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 
-from player.consts import (
+from player.player_consts import (
     EMPTY_SHAPE,
     WIDTH,
     HEIGHT,
@@ -29,7 +29,8 @@ class Player:
     This is the player class, which implement the backbone of the tetris logic. Here all actual logic should be defined.
     """
 
-    def __init__(self):
+    def __init__(self, player_id: int):
+        self.player_id = player_id
         self.score = 0
         self.level = 1.0
         self.centerpoint = ()
@@ -50,9 +51,12 @@ class Player:
             width_iter = range(WIDTH) if y_diff < 0 else reversed(range(WIDTH))
             for y in width_iter:
                 if self.board[x][y] == LIVE:
-                    assert x + x_diff >= 0
-                    assert y + y_diff >= 0
-                    assert self.board[x + x_diff][y + y_diff] != DEAD
+                    if x + x_diff < 0:
+                        raise OutOfBoundsException
+                    if y + y_diff < 0:
+                        raise OutOfBoundsException
+                    if not self.board[x + x_diff][y + y_diff] != DEAD:
+                        raise BlockOverlapException
                     old_pos.append([x, y])
                     new_pos.append([x + x_diff, y + y_diff])
 
@@ -61,7 +65,7 @@ class Player:
         for x, y in new_pos:
             self.board[x][y] = LIVE
 
-        self.centerpoint = (self.centerpoint[0] + x_diff, self.centerpoint[1] + y_diff)
+        self.centerpoint = [self.centerpoint[0] + x_diff, self.centerpoint[1] + y_diff]
         return
 
     def _random_generator(self):
@@ -82,7 +86,7 @@ class Player:
         spawn_area = self.board[SPAWN[0][0] : SPAWN[0][1], SPAWN[1][0] : SPAWN[1][1]]
 
         if DEAD in spawn_area:
-            raise GameOverException(player=self)
+            raise GameOverException(player_id=self.player_id)
 
         piece, self.next_pieces = self.next_pieces[-1], self.next_pieces[:-1]
         if len(self.next_pieces) == 0:
@@ -104,7 +108,7 @@ class Player:
                 self._move(x_diff=-1)
 
         # Changes object to DEAD if any move is invalid
-        except (AssertionError, IndexError):
+        except (OutOfBoundsException, BlockOverlapException, IndexError):
             self._end_round()
 
     def move_sideways(self, diff: int):
@@ -114,7 +118,7 @@ class Player:
         """
         try:
             self._move(y_diff=diff)
-        except (IndexError, AssertionError):
+        except (IndexError, OutOfBoundsException, BlockOverlapException):
             pass
 
     def rotate(

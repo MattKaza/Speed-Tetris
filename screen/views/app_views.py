@@ -1,12 +1,12 @@
 """
-Here are various views of app.py screens, all inheriting from AppScreenLazyClass
+Here are various views of app_views.py screens, all inheriting from AppScreenLazyClass
 """
 from abc import ABC
 
-import screen.utils as utils
+from screen.screen_utils import prettify_key
 from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
-from screen.views.app_consts import (
+from screen.views.app_views_consts import (
     LOGO_GRAPHICS,
     ACTIVE_OPTION,
     EMPTY_OPTION,
@@ -90,7 +90,7 @@ class SettingsAppScreen(AppScreenLazyClass):
         for i in range(len(key_list)):
             key = key_list[i]
             key_list[i] += ": "
-            key_list[i] += utils.prettify_key(self.keymap[key]).rjust(
+            key_list[i] += prettify_key(self.keymap[key]).rjust(
                 SETTINGS_OPTION_COLUMN_WIDTH - len(key_list[i])
             )
         return key_list

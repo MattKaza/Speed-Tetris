@@ -1,13 +1,13 @@
 """
-This module defines the view of the main game, and is used by game.py
+This module defines the view of the main game, and is used by game_views.py
 """
 from typing import List, Optional, Union
 
 import player.player
-import screen.utils as utils
+from screen.screen_utils import border_wrapper, prettify_key
 from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
-from screen.views.game_consts import (
+from screen.views.game_views_consts import (
     PIXEL_SIZE,
     FULL_PIXEL,
     EMPTY,
@@ -70,7 +70,7 @@ class GameScreen(Screen):
             row = row.center(centering_width).replace("  ", EMPTY_PIXEL)
             box.append(row)
 
-        return utils.border_wrapper(graphics=box, width=centering_width + 2, text=text)
+        return border_wrapper(graphics=box, width=centering_width + 2, text=text)
 
     def _draw_stats(self):
         stats = []
@@ -81,7 +81,7 @@ class GameScreen(Screen):
             )
             stats.append(row)
 
-        return utils.border_wrapper(
+        return border_wrapper(
             stats, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=STATS_BORDER_TEXT
         )
 
@@ -89,11 +89,11 @@ class GameScreen(Screen):
         keys = []
         for key in self.keymap:
             row = key.upper() + ":"
-            row += utils.prettify_key(self.keymap[key]).rjust(
+            row += prettify_key(self.keymap[key]).rjust(
                 RIGHT_SIDE_GRAPHICS_WIDTH - len(row)
             )
             keys.append(row)
-        return utils.border_wrapper(
+        return border_wrapper(
             keys, width=RIGHT_SIDE_GRAPHICS_WIDTH + 2, text=HELP_BORDER_TEXT
         )
 
@@ -149,7 +149,5 @@ class GameScreen(Screen):
             if victory
             else YOU_LOST_TEXT
         )
-        formatted_game_over_text[-1] = formatted_game_over_text[-1].format(
-            utils.prettify_key(quit_key)
-        )
+        formatted_game_over_text[-1] = formatted_game_over_text[-1].format(quit=prettify_key(quit_key))
         self.print_screen(text_over_board=formatted_game_over_text)
