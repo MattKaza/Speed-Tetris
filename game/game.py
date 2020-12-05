@@ -9,13 +9,8 @@ from typing import List, Optional, Union
 import player.exceptions
 import player.player
 import screen.views.game_views
-from game.game_consts import (
-    DEFAULT_KEYMAP,
-    fall_speed_formula,
-    COUNTDOWN_TIMEOUT,
-    GAME_OVER_TIMEOUT,
-    NO_KEY,
-)
+from game.game_consts import (COUNTDOWN_TIMEOUT, DEFAULT_KEYMAP,
+                              GAME_OVER_TIMEOUT, NO_KEY, fall_speed_formula)
 from mytyping import ActionMap, CursesWindow, Keymap, StatsDict
 from screen.views.game_views_consts import COUNTDOWN
 
@@ -25,7 +20,9 @@ class GameLazyClass:
     This is the GameLazyClass, in charge of implementing the logic of interactions with the player module
     """
 
-    def __init__(self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP, player_id: int = 0):
+    def __init__(
+        self, stdscr: CursesWindow, keymap: Keymap = DEFAULT_KEYMAP, player_id: int = 0
+    ):
         """
         Initialises and starts a main of one game_player, and prints everything
         :param stdscr: The curses window object of the main
@@ -67,7 +64,9 @@ class GameLazyClass:
         return fall_speed_formula(level=self.known_level)
 
     def _end_game(self, should_restart: Optional[bool] = True):
-        raise player.exceptions.EndGameException(player_id=self.player_id, should_restart=should_restart)
+        raise player.exceptions.EndGameException(
+            player_id=self.player_id, should_restart=should_restart
+        )
 
     def level_up_check(self):
         """
@@ -205,7 +204,9 @@ class LocalGame:
             for game_lazy_class in self.game_lazy_classes:
                 funcs_to_run.append(game_lazy_class.game_over(victory=None))
         else:
-            funcs_to_run.append(self.game_lazy_classes[player_id].game_over(victory=False))
+            funcs_to_run.append(
+                self.game_lazy_classes[player_id].game_over(victory=False)
+            )
             self.already_finished_players.append(self.game_lazy_classes[player_id])
             if self.players_count - len(self.already_finished_players) == 1:
                 for game_lazy_class in self.game_lazy_classes:

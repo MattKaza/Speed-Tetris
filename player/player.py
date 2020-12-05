@@ -5,23 +5,11 @@ from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 
-from player.player_consts import (
-    EMPTY_SHAPE,
-    WIDTH,
-    HEIGHT,
-    LIVE,
-    DEAD,
-    EMPTY,
-    SHAPES_DICT,
-    SPAWN,
-    DEFAULT_CENTERPOINT,
-    SCORE,
-)
-from player.exceptions import (
-    GameOverException,
-    BlockOverlapException,
-    OutOfBoundsException,
-)
+from player.exceptions import (BlockOverlapException, GameOverException,
+                               OutOfBoundsException)
+from player.player_consts import (DEAD, DEFAULT_CENTERPOINT, EMPTY,
+                                  EMPTY_SHAPE, HEIGHT, LIVE, SCORE,
+                                  SHAPES_DICT, SPAWN, WIDTH)
 
 
 class Player:

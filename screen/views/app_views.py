@@ -3,18 +3,15 @@ Here are various views of app_views.py screens, all inheriting from AppScreenLaz
 """
 from abc import ABC
 
-from screen.screen_utils import prettify_key
 from mytyping import CursesWindow, Keymap, OptionMap
 from screen.screen import Screen
-from screen.views.app_views_consts import (
-    LOGO_GRAPHICS,
-    ACTIVE_OPTION,
-    EMPTY_OPTION,
-    LOGO_DISTANCE_FROM_TOP,
-    OPTIONS_DISTANCE_FROM_BOTTOM,
-    SETTINGS_OPTION_COLUMN_WIDTH,
-    SETTINGS_HEADER_DISTANCE_FROM_TOP,
-)
+from screen.screen_utils import prettify_key
+from screen.views.app_views_consts import (ACTIVE_OPTION, EMPTY_OPTION,
+                                           LOGO_DISTANCE_FROM_TOP,
+                                           LOGO_GRAPHICS,
+                                           OPTIONS_DISTANCE_FROM_BOTTOM,
+                                           SETTINGS_HEADER_DISTANCE_FROM_TOP,
+                                           SETTINGS_OPTION_COLUMN_WIDTH)
 
 
 class AppScreenLazyClass(Screen, ABC):

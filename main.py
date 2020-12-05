@@ -6,7 +6,6 @@ import argparse
 import curses
 
 import app.app
-
 from mytyping import CursesWindow
 
 

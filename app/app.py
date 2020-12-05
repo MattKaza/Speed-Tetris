@@ -5,8 +5,8 @@ import asyncio
 import sys
 from typing import List
 
-import game.game_consts
 import game.game
+import game.game_consts
 import player.exceptions
 import screen.views.app_views
 import utils

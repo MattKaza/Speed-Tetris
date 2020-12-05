@@ -4,26 +4,18 @@ This module defines the view of the main game, and is used by game_views.py
 from typing import List, Optional, Union
 
 import player.player
-from screen.screen_utils import border_wrapper, prettify_key
 from mytyping import CursesWindow, Keymap, StatsDict
 from screen.screen import Screen
-from screen.views.game_views_consts import (
-    PIXEL_SIZE,
-    FULL_PIXEL,
-    EMPTY,
-    EMPTY_PIXEL,
-    RIGHT_SIDE_GRAPHICS_WIDTH,
-    STATS_BORDER_TEXT,
-    HELP_BORDER_TEXT,
-    NEXT_BORDER_TEXT,
-    HOLD_BORDER_TEXT,
-    DISPLAYED_HEIGHT,
-    BOARD_BORDER_TEXT,
-    BORDER,
-    GAME_OVER_TEXT,
-    YOU_WON_TEXT,
-    YOU_LOST_TEXT,
-)
+from screen.screen_utils import border_wrapper, prettify_key
+from screen.views.game_views_consts import (BOARD_BORDER_TEXT, BORDER,
+                                            DISPLAYED_HEIGHT, EMPTY,
+                                            EMPTY_PIXEL, FULL_PIXEL,
+                                            GAME_OVER_TEXT, HELP_BORDER_TEXT,
+                                            HOLD_BORDER_TEXT, NEXT_BORDER_TEXT,
+                                            PIXEL_SIZE,
+                                            RIGHT_SIDE_GRAPHICS_WIDTH,
+                                            STATS_BORDER_TEXT, YOU_LOST_TEXT,
+                                            YOU_WON_TEXT)
 
 
 class GameScreen(Screen):
@@ -149,5 +141,7 @@ class GameScreen(Screen):
             if victory
             else YOU_LOST_TEXT
         )
-        formatted_game_over_text[-1] = formatted_game_over_text[-1].format(quit=prettify_key(quit_key))
+        formatted_game_over_text[-1] = formatted_game_over_text[-1].format(
+            quit=prettify_key(quit_key)
+        )
         self.print_screen(text_over_board=formatted_game_over_text)
