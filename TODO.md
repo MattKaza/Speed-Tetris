@@ -4,9 +4,8 @@ TODO:
 * player/player - Refactor
 * Views/game - Nicer 'Game Over' graphics
 * Views/app - Retro background for app menu
-* Views/app - Display keys for both players
 * Views/app - Have the restart and quit buttons as consts / as singularly changeable stuff
-* Views/app - Make the multiplayer players amount changeable
+    * They are consts RN, but can be changed for each keymap independently - Not good
 * Views/app - Have a display with info about current config when hovering on a an option
 * Views/app | app/app - Have a "NotImplementedError" screen for online multiplayer
 * Views/app | app/app - Add logging and display error if scr to small for game
@@ -14,6 +13,8 @@ TODO:
 
 
 DONE TASKS:
+* ~~Views/app - Make the multiplayer players amount changeable~~
+* ~~Views/app - Display keys for both players~~
 * ~~Refactor in general~~
 * ~~Async run local multiplayer~~
 * ~~Refactor graphics code~~

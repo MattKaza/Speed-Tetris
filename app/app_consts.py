@@ -3,7 +3,7 @@ Here are consts relating to the operation of the app module
 """
 from curses import KEY_BACKSPACE, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_UP
 
-DEFAULT_OPTIONS_KEYMAP = {
+DEFAULT_MENUS_KEYMAP = {
     "select": ord("\n"),
     "select2": ord(" "),
     "up": KEY_UP,
@@ -14,5 +14,6 @@ DEFAULT_OPTIONS_KEYMAP = {
     "exit": ord("q"),
 }
 
+MAX_KEY_ALLOC_ATTEMPTS = 20
 LOG_FILE_PATH = r"./app.log"
 PLAYER_NUM_OPTION = "Number of players in a multiplayer session"
