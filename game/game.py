@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 import player.exceptions
 import player.player
 import screen.views.game_views
+# noinspection PyUnresolvedReferences
 from game.game_consts import (
     COUNTDOWN_TIMEOUT,
     DEFAULT_KEYMAP,
@@ -117,7 +118,7 @@ class GameLazyClass:
         This function prints the game over annotation, and should be called when the game is over.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
         """
-        self.screen.game_over(victory=victory, quit_key=self.keymap["quit"])
+        self.screen.game_over(victory=victory, quit_key=self.keymap["quit"], restart_key=self.keymap["restart"])
 
 
 class LocalGame:
@@ -204,8 +205,7 @@ class LocalGame:
             for player_num, keymap in enumerate(self.list_of_keymaps):
                 if key == keymap["quit"]:
                     self.game_lazy_classes[player_num].action_map["quit"]()
-            else:
-                for player_num in range(self.players_count):
+                elif key == keymap["restart"]:
                     self.game_lazy_classes[player_num].action_map["restart"]()
 
     async def game_over(self, player_id):

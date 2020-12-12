@@ -21,33 +21,19 @@ HELP_BORDER_TEXT = "Help"
 # SEPARATOR = "-" * 30
 PIXEL_SIZE = 2
 RIGHT_SIDE_GRAPHICS_WIDTH = (
-    PIXEL_SIZE * 8
+        PIXEL_SIZE * 8
 )  # Multiplier needs to be even for best results
 BORDER = "┃"
 FULL_PIXEL = "█" * PIXEL_SIZE
 EMPTY_PIXEL = "".join(
-    reversed("·".center(PIXEL_SIZE))
+    "·".ljust(PIXEL_SIZE)
 )  # Reversed because I like the right-tending alignment better
 
 # Graphical displays
-GAME_OVER_TEXT = [
-    "G A M E   O V E R",
-    "Press any key",
-    "to restart",
-    "Press {quit} to quit",
-]
-YOU_WON_TEXT = [
-    "You won !",
-    "Press any key",
-    "to restart",
-    "Press {quit} to quit",
-]
-YOU_LOST_TEXT = [
-    "You lost :(",
-    "Press any key",
-    "to restart",
-    "Press {quit} to quit",
-]
+GAME_OVER_TEXT = "G A M E   O V E R\n"
+YOU_WON_TEXT = "You won !\n"
+YOU_LOST_TEXT = "You lost :(\n"
+GAME_OVER_OPTIONS = "Press {restart} to restart\nPress {quit} to quit"
 
 COUNTDOWN = [
     [

@@ -22,7 +22,7 @@ from screen.views.game_views_consts import (
     RIGHT_SIDE_GRAPHICS_WIDTH,
     STATS_BORDER_TEXT,
     YOU_LOST_TEXT,
-    YOU_WON_TEXT,
+    YOU_WON_TEXT, GAME_OVER_OPTIONS,
 )
 
 
@@ -136,20 +136,19 @@ class GameScreen(Screen):
             except IndexError:
                 self.graphics.append(board[i])
 
-    def game_over(self, victory: Union[bool, None], quit_key: int):
+    def game_over(self, victory: Union[bool, None], quit_key: int, restart_key: int):
         """
         This is how you init the game over graphics.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
         :param quit_key: The index of the key used to quit.
+        :param restart_key: The index of the key used to restart.
         """
-        formatted_game_over_text = (
+        game_over_text = (
             GAME_OVER_TEXT
             if victory is None
             else YOU_WON_TEXT
             if victory
             else YOU_LOST_TEXT
         )
-        formatted_game_over_text[-1] = formatted_game_over_text[-1].format(
-            quit=prettify_key(quit_key)
-        )
-        self.print_screen(text_over_board=formatted_game_over_text)
+        game_over_text += GAME_OVER_OPTIONS.format(restart=prettify_key(restart_key), quit=prettify_key(quit_key))
+        self.print_screen(text_over_board=game_over_text.splitlines())
