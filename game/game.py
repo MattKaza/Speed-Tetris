@@ -59,7 +59,7 @@ class GameLazyClass:
             LEFT: lambda: self.player.move_sideways(-1),
             RIGHT: lambda: self.player.move_sideways(1),
             DOWN: lambda: self.player.cycle(),
-            ROTATE: lambda: self.player.rotate(),
+            ROTATE: lambda: self.player.rotate(clockwise_rotations=1),
             DROP: lambda: self.player.cycle(hard_drop=True),
             RESTART: lambda: self._end_game(should_restart=True),
             QUIT: lambda: self._end_game(should_restart=False),
@@ -112,13 +112,14 @@ class GameLazyClass:
         for number in COUNTDOWN:
             self.screen.print_screen(text_over_board=number)
             await asyncio.sleep(COUNTDOWN_TIMEOUT)
+        self.player.spawn_first_piece()
 
     async def game_over(self, victory: Optional[bool] = None):
         """
         This function prints the game over annotation, and should be called when the game is over.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
         """
-        self.screen.game_over(victory=victory, quit_key=self.keymap["quit"], restart_key=self.keymap["restart"])
+        self.screen.display_game_over(victory=victory, quit_key=self.keymap["quit"], restart_key=self.keymap["restart"])
 
 
 class LocalGame:
@@ -167,7 +168,7 @@ class LocalGame:
         for game_lazy_class in self.game_lazy_classes:
             funcs_to_run.append(game_lazy_class.start_countdown())
         await asyncio.gather(*funcs_to_run)
-
+        # TODO BUGFIX: Wait for all previous futures to finish before running next one
         funcs_to_run = [self.key_hook()]
         for game_lazy_class in self.game_lazy_classes:
             funcs_to_run.append(game_lazy_class.cycle())
@@ -212,6 +213,7 @@ class LocalGame:
         """
         This is called on game over, to init the game over logic on all the GameLazyClasses
         """
+        # TODO BUGFIX: Game over on one player blocks all other players. We need to rethink it.
         funcs_to_run = [self.game_over_key_hook()]
         if self.players_count == 1:
             for game_lazy_class in self.game_lazy_classes:

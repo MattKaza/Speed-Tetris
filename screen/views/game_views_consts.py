@@ -1,12 +1,24 @@
 """
 Here are graphical consts related to views of the game module
 """
-import player.player_consts
+from player.player_consts import O_BLOCK, I_BLOCK, J_BLOCK, L_BLOCK, S_BLOCK, Z_BLOCK, T_BLOCK, EMPTY, LIVE, DEAD
 
-# Pixel indices
-EMPTY = player.player_consts.EMPTY
-LIVE = player.player_consts.LIVE
-DEAD = player.player_consts.DEAD
+# Piece shapes
+SHAPES_VIEWS = {
+    O_BLOCK: [[0, 1, 1, 0], [0, 1, 1, 0]],
+    I_BLOCK: [[1, 1, 1, 1], [0, 0, 0, 0]],
+    J_BLOCK: [[1, 1, 1, 0], [1, 0, 0, 0]],
+    L_BLOCK: [[1, 1, 1, 0], [0, 0, 1, 0]],
+    S_BLOCK: [[1, 1, 0, 0], [0, 1, 1, 0]],
+    Z_BLOCK: [[0, 1, 1, 0], [1, 1, 0, 0]],
+    T_BLOCK: [[1, 1, 1, 0], [0, 1, 0, 0]],
+}
+EMPTY_PIECE = [[0, 0, 0, 0], [0, 0, 0, 0]]
+
+# Pixel indices, defined here for clarity
+EMPTY = EMPTY
+LIVE = LIVE
+DEAD = DEAD
 
 # Board indices
 DISPLAYED_HEIGHT = 20
@@ -25,9 +37,10 @@ RIGHT_SIDE_GRAPHICS_WIDTH = (
 )  # Multiplier needs to be even for best results
 BORDER = "┃"
 FULL_PIXEL = "█" * PIXEL_SIZE
+EMPTY_PIXEL_PRE_CENTER = " " * PIXEL_SIZE
 EMPTY_PIXEL = "".join(
     "·".ljust(PIXEL_SIZE)
-)  # Reversed because I like the right-tending alignment better
+)
 
 # Graphical displays
 GAME_OVER_TEXT = "G A M E   O V E R\n"

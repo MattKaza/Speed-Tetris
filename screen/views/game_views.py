@@ -1,10 +1,10 @@
 """
 This module defines the view of the main game, and is used by game_views.py
 """
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import player.player
-from mytyping import CursesWindow, Keymap, StatsDict
+from mytyping import CursesWindow, Keymap, StatsDict, PieceCoordinates
 from screen.screen import Screen
 from screen.screen_utils import border_wrapper, prettify_key
 from screen.views.game_views_consts import (
@@ -22,7 +22,7 @@ from screen.views.game_views_consts import (
     RIGHT_SIDE_GRAPHICS_WIDTH,
     STATS_BORDER_TEXT,
     YOU_LOST_TEXT,
-    YOU_WON_TEXT, GAME_OVER_OPTIONS,
+    YOU_WON_TEXT, GAME_OVER_OPTIONS, EMPTY_PIECE, SHAPES_VIEWS, EMPTY_PIXEL_PRE_CENTER,
 )
 
 
@@ -32,11 +32,11 @@ class GameScreen(Screen):
     """
 
     def __init__(
-        self,
-        stdscr: CursesWindow,
-        game_player: player.player.Player,
-        keymap: Keymap,
-        stats_map: StatsDict,
+            self,
+            stdscr: CursesWindow,
+            game_player: player.player.Player,
+            keymap: Keymap,
+            stats_map: StatsDict,
     ):
         super().__init__(stdscr)
         self.player = game_player
@@ -44,12 +44,16 @@ class GameScreen(Screen):
         self.stats_map = stats_map
 
     @staticmethod
+    def _get_piece_view(piece_key):
+        return SHAPES_VIEWS.get(piece_key, EMPTY_PIECE)
+
+    @staticmethod
     def _draw_piece(
-        piece_coord: List[List[int]],
-        text: str,
-        x_size: Optional[int] = None,
-        y_size: Optional[int] = None,
-        centering_width: Optional[int] = None,
+            piece_coord: PieceCoordinates,
+            text: str,
+            x_size: Optional[int] = None,
+            y_size: Optional[int] = None,
+            centering_width: Optional[int] = None,
     ):
         if not x_size:
             x_size = len(piece_coord)
@@ -65,7 +69,7 @@ class GameScreen(Screen):
         for i in reversed(range(x_size)):
             row = ""
             for j in range(y_size):
-                block = FULL_PIXEL if piece_coord[i][j] != EMPTY else EMPTY_PIXEL
+                block = FULL_PIXEL if piece_coord[i][j] != EMPTY else EMPTY_PIXEL_PRE_CENTER
                 row += block
             row = row.center(centering_width).replace("  ", EMPTY_PIXEL)
             box.append(row)
@@ -101,16 +105,16 @@ class GameScreen(Screen):
         right_side_graphics = (
             #  Next piece
             self._draw_piece(
-                piece_coord=self.player.next_pieces[-1][1],
+                piece_coord=self._get_piece_view(self.player.next_pieces[-1][0]),
                 text=NEXT_BORDER_TEXT,
                 centering_width=RIGHT_SIDE_GRAPHICS_WIDTH,
             )
             #  Held piece
             + self._draw_piece(
-                piece_coord=self.player.held_piece,
-                text=HOLD_BORDER_TEXT,
-                centering_width=RIGHT_SIDE_GRAPHICS_WIDTH,
-            )
+            piece_coord=self._get_piece_view(self.player.held_piece_key),
+            text=HOLD_BORDER_TEXT,
+            centering_width=RIGHT_SIDE_GRAPHICS_WIDTH,
+        )
             #  Game stats
             + self._draw_stats()
             #  Keymap and help
@@ -136,7 +140,7 @@ class GameScreen(Screen):
             except IndexError:
                 self.graphics.append(board[i])
 
-    def game_over(self, victory: Union[bool, None], quit_key: int, restart_key: int):
+    def display_game_over(self, victory: Union[bool, None], quit_key: int, restart_key: int):
         """
         This is how you init the game over graphics.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
