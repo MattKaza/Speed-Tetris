@@ -1,7 +1,18 @@
 """
 Here are graphical consts related to views of the game module
 """
-from player.player_consts import O_BLOCK, I_BLOCK, J_BLOCK, L_BLOCK, S_BLOCK, Z_BLOCK, T_BLOCK, EMPTY, LIVE, DEAD
+from player.player_consts import (
+    DEAD,
+    EMPTY,
+    I_BLOCK,
+    J_BLOCK,
+    L_BLOCK,
+    LIVE,
+    O_BLOCK,
+    S_BLOCK,
+    T_BLOCK,
+    Z_BLOCK,
+)
 
 # Piece shapes
 SHAPES_VIEWS = {
@@ -38,9 +49,7 @@ RIGHT_SIDE_GRAPHICS_WIDTH = (
 BORDER = "┃"
 FULL_PIXEL = "█" * PIXEL_SIZE
 EMPTY_PIXEL_PRE_CENTER = " " * PIXEL_SIZE
-EMPTY_PIXEL = "".join(
-    "·".ljust(PIXEL_SIZE)
-)
+EMPTY_PIXEL = "".join("·".ljust(PIXEL_SIZE))
 
 # Graphical displays
 GAME_OVER_TEXT = "G A M E   O V E R\n"

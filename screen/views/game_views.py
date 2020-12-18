@@ -4,7 +4,7 @@ This module defines the view of the main game, and is used by game_views.py
 from typing import Optional, Union
 
 import player.player
-from mytyping import CursesWindow, Keymap, StatsDict, PieceCoordinates
+from mytyping import CursesWindow, Keymap, PieceCoordinates, StatsDict
 from screen.screen import Screen
 from screen.screen_utils import border_wrapper, prettify_key
 from screen.views.game_views_consts import (
@@ -12,17 +12,21 @@ from screen.views.game_views_consts import (
     BORDER,
     DISPLAYED_HEIGHT,
     EMPTY,
+    EMPTY_PIECE,
     EMPTY_PIXEL,
+    EMPTY_PIXEL_PRE_CENTER,
     FULL_PIXEL,
+    GAME_OVER_OPTIONS,
     GAME_OVER_TEXT,
     HELP_BORDER_TEXT,
     HOLD_BORDER_TEXT,
     NEXT_BORDER_TEXT,
     PIXEL_SIZE,
     RIGHT_SIDE_GRAPHICS_WIDTH,
+    SHAPES_VIEWS,
     STATS_BORDER_TEXT,
     YOU_LOST_TEXT,
-    YOU_WON_TEXT, GAME_OVER_OPTIONS, EMPTY_PIECE, SHAPES_VIEWS, EMPTY_PIXEL_PRE_CENTER,
+    YOU_WON_TEXT,
 )
 
 
@@ -69,7 +73,9 @@ class GameScreen(Screen):
         for i in reversed(range(x_size)):
             row = ""
             for j in range(y_size):
-                block = FULL_PIXEL if piece_coord[i][j] != EMPTY else EMPTY_PIXEL_PRE_CENTER
+                block = (
+                    FULL_PIXEL if piece_coord[i][j] != EMPTY else EMPTY_PIXEL_PRE_CENTER
+                )
                 row += block
             row = row.center(centering_width).replace("  ", EMPTY_PIXEL)
             box.append(row)
@@ -140,7 +146,9 @@ class GameScreen(Screen):
             except IndexError:
                 self.graphics.append(board[i])
 
-    def display_game_over(self, victory: Union[bool, None], quit_key: int, restart_key: int):
+    def display_game_over(
+            self, victory: Union[bool, None], quit_key: int, restart_key: int
+    ):
         """
         This is how you init the game over graphics.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
@@ -154,5 +162,7 @@ class GameScreen(Screen):
             if victory
             else YOU_LOST_TEXT
         )
-        game_over_text += GAME_OVER_OPTIONS.format(restart=prettify_key(restart_key), quit=prettify_key(quit_key))
+        game_over_text += GAME_OVER_OPTIONS.format(
+            restart=prettify_key(restart_key), quit=prettify_key(quit_key)
+        )
         self.print_screen(text_over_board=game_over_text.splitlines())

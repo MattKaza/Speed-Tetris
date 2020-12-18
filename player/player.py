@@ -1,7 +1,7 @@
 """
 This is the player module, in charge of actual game logic and the way tetris behaves and is played.
 """
-from typing import Optional, Tuple, List
+from typing import List, Optional, Tuple
 
 import numpy as np  # type: ignore
 
@@ -9,22 +9,22 @@ from mytyping import BoundingBox
 from player.exceptions import (
     BlockOverlapException,
     GameOverException,
-    OutOfBoundsException,
     NoWallKickOffsetData,
+    OutOfBoundsException,
 )
 from player.player_consts import (
     DEAD,
     EMPTY,
+    GENERAL_BLOCK_OFFSET_DATA,
     HEIGHT,
+    I_BLOCK,
+    I_BLOCK_OFFSET_DATA,
     LIVE,
+    O_BLOCK,
+    O_BLOCK_OFFSET_DATA,
     SCORE,
     SHAPES_DICT,
     WIDTH,
-    O_BLOCK,
-    I_BLOCK,
-    GENERAL_BLOCK_OFFSET_DATA,
-    I_BLOCK_OFFSET_DATA,
-    O_BLOCK_OFFSET_DATA,
 )
 from utils import log
 
@@ -61,7 +61,8 @@ class Player:
         self.place_bounding_box_on_board(
             bb=self.bounding_box,
             bb_bot_left_x=self.bb_x + x_diff,
-            bb_bot_left_y=self.bb_y + y_diff)
+            bb_bot_left_y=self.bb_y + y_diff,
+        )
         # If no exception is thrown #
         self.bb_x += x_diff
         self.bb_y += y_diff
@@ -94,7 +95,9 @@ class Player:
         self.bb_y = int((len(self.board[0]) - len(self.bounding_box[0])) / 2)
         self.rotation_state = 0
         try:
-            self.place_bounding_box_on_board(bb=self.bounding_box, bb_bot_left_x=self.bb_x, bb_bot_left_y=self.bb_y)
+            self.place_bounding_box_on_board(
+                bb=self.bounding_box, bb_bot_left_x=self.bb_x, bb_bot_left_y=self.bb_y
+            )
         except BlockOverlapException:  # Dead piece in spawn area
             raise GameOverException(player_id=self.player_id)
 
@@ -140,7 +143,9 @@ class Player:
                 new_bounding_box[new_x][new_y] = pixel
         return new_bounding_box
 
-    def _check_placement_on_board(self, bb: BoundingBox, bb_bot_left_x: int, bb_bot_left_y: int):
+    def _check_placement_on_board(
+            self, bb: BoundingBox, bb_bot_left_x: int, bb_bot_left_y: int
+    ):
         size = len(bb)
         new_positions = []  # type: List[Tuple[int, int]]
         # Check that all placements are okay
@@ -158,7 +163,9 @@ class Player:
                 new_positions.append((x + bb_bot_left_x, y + bb_bot_left_y))
         return new_positions
 
-    def place_bounding_box_on_board(self, bb: BoundingBox, bb_bot_left_x: int, bb_bot_left_y: int):
+    def place_bounding_box_on_board(
+            self, bb: BoundingBox, bb_bot_left_x: int, bb_bot_left_y: int
+    ):
         """
         Tests the placement of a bounding box in a given index over the board
         On failure, raises BlockOverlapException or OutOfBoundsException
@@ -182,21 +189,21 @@ class Player:
                 return tuple(
                     np.subtract(
                         O_BLOCK_OFFSET_DATA[self.rotation_state][kick_try],
-                        O_BLOCK_OFFSET_DATA[rotation_state][kick_try]
+                        O_BLOCK_OFFSET_DATA[rotation_state][kick_try],
                     )
                 )
             elif self.active_piece_key == I_BLOCK:
                 return tuple(
                     np.subtract(
                         I_BLOCK_OFFSET_DATA[self.rotation_state][kick_try],
-                        I_BLOCK_OFFSET_DATA[rotation_state][kick_try]
+                        I_BLOCK_OFFSET_DATA[rotation_state][kick_try],
                     )
                 )
             else:
                 return tuple(
                     np.subtract(
                         GENERAL_BLOCK_OFFSET_DATA[self.rotation_state][kick_try],
-                        GENERAL_BLOCK_OFFSET_DATA[rotation_state][kick_try]
+                        GENERAL_BLOCK_OFFSET_DATA[rotation_state][kick_try],
                     )
                 )
         except IndexError:
@@ -216,20 +223,25 @@ class Player:
         for i in range(clockwise_rotations):
             new_bounding_box = self._rotate_bounding_box(new_bounding_box)
             new_rotation_state += 1
-            new_rotation_state = new_rotation_state % 4  # Because the are only 4 possible states
+            new_rotation_state = (
+                    new_rotation_state % 4
+            )  # Because the are only 4 possible states
         # Applies the offset and tries placing the bb on the board #
         while True:
             try:
-                x_offset, y_offset = self._get_wall_kick_offset(kick_try=kick_try, rotation_state=new_rotation_state)
+                x_offset, y_offset = self._get_wall_kick_offset(
+                    kick_try=kick_try, rotation_state=new_rotation_state
+                )
 
-                log.warning('New bounding box')
+                log.warning("New bounding box")
                 log.warning(str(new_bounding_box))
                 log.info("Applying wall kick offsets")
                 log.info(str([x_offset, y_offset]))
                 self.place_bounding_box_on_board(
                     bb=new_bounding_box,
                     bb_bot_left_x=self.bb_x + x_offset,
-                    bb_bot_left_y=self.bb_y + y_offset)
+                    bb_bot_left_y=self.bb_y + y_offset,
+                )
                 break
             except (BlockOverlapException, OutOfBoundsException):
                 kick_try += 1

@@ -119,7 +119,11 @@ class GameLazyClass:
         This function prints the game over annotation, and should be called when the game is over.
         :param victory: Whether to display a winning or losing text. Displays neutral text when None.
         """
-        self.screen.display_game_over(victory=victory, quit_key=self.keymap["quit"], restart_key=self.keymap["restart"])
+        self.screen.display_game_over(
+            victory=victory,
+            quit_key=self.keymap["quit"],
+            restart_key=self.keymap["restart"],
+        )
 
 
 class LocalGame:
